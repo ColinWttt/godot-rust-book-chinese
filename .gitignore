@@ -1,0 +1,9 @@
+book/
+*~
+.DS_Store
+target
+tmp
+.vscode/
+.idea/
+*.code-workspace
+mdbook-admonish.css
