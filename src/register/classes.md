@@ -23,7 +23,7 @@ Rust 使得类注册变得简单。如前所述，Rust 语法作为基础，并�
 
 在 Rust 中，Godot 类由结构体表示。结构体的定义方式与平常一样，可以包含任意数量的字段。为了将它们注册到 Godot 中，你需要派生 `GodotClass` 特征。
 
-```admonish info title="GodotClass trait"
+```admonish info title="GodotClass 特征"
 `GodotClass` 特征标记了所有在 Godot 中已知的类。例如，`Node` 或 `Resource` 类已经实现了该特征。
 如果你想注册自己的类，也需要实现 `GodotClass` 特征。
 
@@ -44,8 +44,8 @@ struct Monster {
 
 就这样。在编译后，这个类通过热重载（在 Godot 4.2 之前是重启后）会立即在 Godot 中可用。虽然它还不太有用，但上述定义足以将 `Monster` 类注册到引擎中。
 
-```admonish info title="Auto-registration"
-`#[derive(GodotClass)]` 会_自动_注册该类 —— 你无需显式调用 `add_class()` 注册或维护一个包含所有类的中央列表。
+```admonish info title="自动注册"
+`#[derive(GodotClass)]` 会 _自动_ 注册该类 —— 你无需显式调用 `add_class()` 注册或维护一个包含所有类的中央列表。
 
 该过程宏会在启动时自动将类注册到一个这样的列表中。
 ```
@@ -88,7 +88,7 @@ struct Monster {
 
 关键部分是 `Base<T>` 类型。`T` 必须与你在 `#[class(base=...)]` 属性中指定的基类相匹配。你也可以使用关联类型 `Self::Base` 来代替 `T`。
 
-当你在结构体中声明基类字段时，`#[derive]` 过程宏会自动检测到 `Base<T>` 类型。[注释^inference]
+当你在结构体中声明基类字段时，`#[derive]` 过程宏会自动检测到 `Base<T>` 类型。[^inference]
 这使得你可以通过提供的方法 `self.base()` 和 `self.base_mut()` 访问 `Node` API，稍后我们会详细介绍。
 
 
