@@ -20,19 +20,17 @@ GDScript.
 <!-- toc -->
 
 
-## Default constructor
+## 默认构造函数
 
-The constructor of any `GodotClass` object is called `init` in gdext. This constructor is necessary to instantiate the object in Godot.
-It is invoked by the scene tree or when you write `Monster.new()` in GDScript.
+在 gdext 中，任何 `GodotClass` 对象的构造函数被称为 `init`。这个构造函数是用来在 Godot 中实例化对象的。当场景树需要实例化对象，或者当你在 GDScript 中调用 `Monster.new()` 时，它会被调用。
 
-There are two options to define the constructor: let gdext generate it or define it manually. It is also possible to opt out of `init` if you
-don't need Godot to default-construct your object.
+定义构造函数有两种选择：可以让 gdext 自动生成，也可以手动定义。如果你不需要 Godot 默认构造你的对象，还可以选择不使用 `init`。
 
 
-### Library-generated `init`
+### 库生成的 `init`
 
-You can use `#[class(init)]` to generate a constructor for you. This is limited to simple cases, and it calls `Default::default()` for each
-field (except the `Base<T>` one, which is correctly wired up with the base object).
+你可以使用 `#[class(init)]` 来为你生成一个构造函数。这仅限于简单的情况，它会对每个字段调用  `Default::default()`  (除了 `Base<T>` , 后者会正确地与基类对象连接)。
+
 
 ```rust
 #[derive(GodotClass)]
@@ -44,8 +42,7 @@ struct Monster {
 }
 ```
 
-To provide another default value, use `#[init(val = value)]`. This should only be used for simple cases, as it may lead to difficult-to-read
-code and error messages. This API may also still change.
+如果需要为字段提供其他默认值，可以使用 `#[init(val = value)]`。此方法仅适用于简单场景，因为它可能会导致代码难以阅读和难以理解的错误信息。此外，此 API 仍可能发生变更。
 
 ```rust
 #[derive(GodotClass)]
@@ -61,9 +58,9 @@ struct Monster {
 ```
 
 
-### Manually defined `init`
+### 手动定义 `init`
 
-We can provide a manually-defined constructor by overriding the trait's associated function `init`:
+我们可以通过复写特征的关联函数 `init` 来提供手动定义的构造函数：
 
 ```rust
 #[derive(GodotClass)]
@@ -86,26 +83,22 @@ impl INode3D for Monster {
 }
 ```
 
-As you can see, the `init` function takes a `Base<Node3D>` as its one and only parameter. This is the base class instance, which is typically
-just forwarded to its corresponding field in the struct, here `base`.
+如你所见，`init`  函数接受一个 `Base<Node3D>` 作为唯一参数。这个是基类实例，通常只是被转发到结构体中的相应字段（这里是 `base`）。
 
-The `init` method always returns `Self`. You may notice that this is currently the only way to construct a `Monster` instance. As soon as your
-struct contains a base field, you can no longer provide your own constructor, as you can't provide a value for that field. This is by design and
-ensures that _if_ you need access to the base, that base comes from Godot directly.
+`init` 方法总是返回 `Self`。你可能注意到，目前这是构造 `Monster` 实例的唯一方式。一旦你的结构体包含了一个基类字段，你就不能再提供自己的构造函数了，因为你不能为这个字段提供一个值。这是设计上的原因，并且确保了 _如果_ 你需要访问基类，这个基类是直接来自 Godot 的。
 
-However, fear not: you can still provide all sorts of constructors, they just need to go through dedicated functions that internally call `init`.
-More on this in the next section.
+不过，不用担心：你仍然可以提供各种构造函数，只是它们需要通过专门的函数来实现，这些函数内部调用 `init`。更多内容将在下一节讨论。
 
 
-### Disabled `init`
+### 禁用 `init`
 
-You don't always need to provide a default constructor to Godot. Reasons to not have a constructor include:
+你并不总是需要为 Godot 提供默认构造函数。没有构造函数的原因包括：
 
-- Your class is not a node that should be added to the tree as part of a scene file.
-- You require custom parameters to be provided for your object invariants -- a default value is not meaningful.
-- You only need to construct objects from Rust code, not from GDScript or the Godot editor.
-
-To disable the `init` constructor, you can use `#[class(no_init)]`:
+- 你的类不是一个应该作为场景文件一部分添加到树中的节点。
+- 你需要为对象的不可变状态提供自定义参数 —— 默认值没有意义。
+- 你只需要从 Rust 代码中构造对象，而不是从 GDScript 或 Godot 编辑器中构造。
+  
+要禁用 `init` 构造函数，可以使用 `#[class(no_init)]`：
 
 ```rust
 #[derive(GodotClass)]
@@ -117,15 +110,14 @@ struct Monster {
 }
 ```
 
-Not providing/generating an `init` method and forgetting to use `#[class(no_init)]` will result in a compile-time error.
+如果不提供/生成 `init` 方法并且忘记使用 `#[class(no_init)]`，将导致编译时错误。
 
 
-## Custom constructors
+## 自定义构造函数
 
-The default constructor `init` is not always useful, as it may leave objects in an incorrect state.
+默认的构造函数 `init` 并不总是有用，因为它可能会让对象处于不正确的状态。
 
-For example, a `Monster` will always have the same values for `name` and `hitpoints` upon construction, which may not be desired.
-Let's provide a more suitable constructor, which accepts those attributes as parameters.
+例如， `Monster` 在构造时总会有相同的 `name` 和 `hitpoints` 这可能不是我们希望的。让我们提供一个更合适的构造函数，它将这些属性作为参数。
 
 ```rust
 // Default constructor from before.
@@ -144,32 +136,29 @@ impl Monster {
 }
 ```
 
-But now, how to fill in the blanks? `Self` requires a base object, how to obtain it? In fact, we cannot return `Self` here.
+但现在，如何填补空白呢？`Self`需要一个基类对象，我们该如何获取它呢？实际上，我们不能在这里返回 `Self`。
 
-```admonish info title="Passing around objects"
-When interacting with Godot from Rust, all objects (class instances) need to be transported inside the `Gd` smart pointer -- whether
-they appear as parameters or return types.
+```admonish info title="传递对象"
+在 Rust 与 Godot 交互时，所有对象（类实例）都需要通过 `Gd` 智能指针传递——无论它们是作为参数还是返回类型。
 
-The return types of `init` and a few other gdext-provided functions are an exception, because the library requires at this point that you
-have a _value_ of the raw object. You never need to return `Self` in your own defined `#[func]` functions.
+`init` 和一些其他 gdext 提供的函数的返回类型是一个例外，因为库在此时要求你拥有一个原始对象的_值_。你在自己定义的 `#[func]` 函数中不需要返回 `Self`。
 
-For details, consult [the chapter about objects][book-objects] or the [`Gd<T>` API docs][api-gd].
+详细信息请参见 [关于对象的章节][book-objects] 或 [`Gd<T>` API 文档][api-gd]。
+
 ```
 
-So we need to return `Gd<Self>` instead of `Self`.
+所以我们需要返回  `Gd<Self>` 而不是 `Self`.
 
 
-### Objects with a base field
+### 带有基类字段的对象
 
-If your class `T` contains a `Base<...>` field, you cannot create a standalone instance -- you must encapsulate it in `Gd<T>`.
-You can also not extract a `T` from a `Gd<T>` smart pointer anymore; since it has potentially been shared with the Godot engine, this would
-not be a safe operation.
+如果你的类  `T` 包含一个 `Base<...>` 字段，你不能创建一个独立的实例——你必须将其封装在`Gd<T>`。
+你也不能再从 `Gd<T>` 智能指针中提取 `T`；因为它可能已经与 Godot 引擎共享，这样做将不是一个安全的操作。
 
-To construct `Gd<Self>`, we can use [`Gd::from_init_fn()`][api-gd-from-init-fn], which takes a closure. This closure accepts a `Base` object
-and returns an instance of `Self`. In other words, it has the same signature as `init` -- this presents an alternative way of constructing
-Godot objects, while allowing to pass in addition context.
+为了构造  `Gd<Self>`, 我们可以使用 [`Gd::from_init_fn()`][api-gd-from-init-fn], 它接受一个闭包。这个闭包接受一个 `Base` 对象并返回 `Self` 的实例。
+换句话说，它的签名与 `init` 相同——这提供了一种替代的构造 Godot 对象的方法，同时允许额外的上下文传递。
 
-The result of `Gd::from_init_fn()` is a `Gd<Self>` object, which can be directly returned by `Monster::from_name_hp()`.
+`Gd::from_init_fn()` 的结果是一个 `Gd<Self>` 对象，它可以直接由 `Monster::from_name_hp()` 返回。
 
 ```rust
 #[godot_api]
@@ -190,19 +179,18 @@ impl Monster {
 }
 ```
 
-That's it! The just added associated function is now registered in GDScript and effectively works as a constructor:
+就是这样！刚刚添加的关联函数现在已在 GDScript 中注册，并有效地作为构造函数使用：
 
 ```php
 var monster = Monster.from_name_hp("Nomster", 100)
 ```
 
 
-### Objects without a base field
+### 没有基类字段的对象
 
-For classes that don't have a base field, you can simply use [`Gd::from_object()`][api-gd-from-object] instead of `Gd::from_init_fn()`.
+对于没有基类字段的类，你可以简单地使用 [`Gd::from_object()`][api-gd-from-object]，而不是 `Gd::from_init_fn()`。
 
-This is often useful for _data bundles_, which don't define much logic but are an object-oriented way to bundle related data in a single
-type. Such classes are typically subclasses of `RefCounted` or `Resource`.
+这通常对于 _数据包_ 很有用，数据包不定义太多逻辑，但它是一种面向对象的方式，将相关数据打包在单一类型中。这些类通常是 `RefCounted` 或 `Resource` 的子类。
 
 ```rust
 #[derive(GodotClass)]
@@ -229,10 +217,9 @@ impl MonsterConfig {
 ```
 
 
-## Destructors
+## 析构函数
 
-You do not typically need to declare your own destructors, if you manage memory through [RAII][wiki-raii]. If you do however need custom
-cleanup logic, simply declare the `Drop` trait for your type:
+如果你通过 [RAII][wiki-raii] 管理内存，通常你不需要声明自己的析构函数。但是如果你确实需要自定义的清理逻辑，只需为你的类型声明 `Drop` 特征：
 
 ```rust
 impl Drop for Monster {
@@ -242,14 +229,12 @@ impl Drop for Monster {
 }
 ```
 
-`Drop::drop()` is invoked as soon as Godot orders the destruction of your `Gd<T>` smart pointer -- either if it is manually freed, or if the
-last reference to it goes out of scope.
+当 Godot 命令销毁你的 `Gd<T>` 智能指针时——无论是手动释放，还是最后一个引用超出作用域——都会调用`Drop::drop()`。
 
 
-## Conclusion
+## 结论
 
-Constructors allow to initialize Rust classes in various ways. You can generate, implement, or disable the default constructor `init`, and you
-can provide as many custom constructors with different signatures as you like.
+构造函数允许以各种方式初始化 Rust 类。你可以生成、实现或禁用默认构造函数 `init`，并且可以提供任意多的具有不同签名的自定义构造函数。
 
 [api-gd-from-init-fn]: https://godot-rust.github.io/docs/gdext/master/godot/obj/struct.Gd.html#method.from_init_fn
 [api-gd-from-object]: https://godot-rust.github.io/docs/gdext/master/godot/obj/struct.Gd.html#method.from_object
