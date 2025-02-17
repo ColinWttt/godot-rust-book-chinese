@@ -7,7 +7,7 @@ name: "Book CI"
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
 
 env:
