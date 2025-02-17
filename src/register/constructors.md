@@ -5,7 +5,7 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# 构造函数（Constructors） 
+# 构造函数（Constructors）
 
 While Rust does not have constructors as a language feature (like C++ or C#), associated functions that return a new object are commonly
 called "constructors". We extend the term to include slightly deviating signatures, but conceptually _constructors_ are always

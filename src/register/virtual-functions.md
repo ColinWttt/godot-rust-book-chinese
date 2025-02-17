@@ -5,7 +5,7 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Gdscript复写Rust定义的虚函数
+# GDScript复写Rust定义的虚函数
 
 The GDExtension API allows you to define virtual functions in Rust, which can be overridden in scripts attached to your objects.
 
