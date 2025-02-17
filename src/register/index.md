@@ -5,45 +5,38 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Registering Rust symbols
+# 注册 Rust 符号
 
-This chapter teaches how you make your own Rust code available to Godot. You do this by _registering_ individual symbols (classes, functions etc.)
-in the engine.
+本章节介绍如何将自己的 Rust 代码暴露给 Godot。你通过在引擎中 _注册_ 单独的符号（类、函数等）来实现这一点。
 
-Starting with class registration, the chapter then goes into the details of registering functions, properties, signals and constants.
+从类注册开始，章节接着详细介绍如何注册函数、属性、信号和常量。
+
 
 <!-- TODO: Futher aspects cover the Rust-to-Godot conversions using `ToGodot`/`FromGodot` traits and the registration of enums. -->
 
 
-## Proc-macro API
+## 过程宏 API
 
-The proc-macro API is currently the only way to register Rust symbols. A variety of procedural macros (derive and attribute macros) are provided
-to decorate your Rust items, such as `struct`s or `impl` blocks. Behind the scenes, these macros generate the necessary glue code to register
-each item with Godot.
+目前，过程宏 API 是注册 Rust 符号的唯一方式。提供了多种过程宏（派生和属性宏）来修饰你的 Rust 项，如 `struct` 或 `impl` 块。在底层，这些宏会生成必要的胶水代码，将每个项目注册到 Godot 中。
 
-The library is designed in a way that you can use all your existing knowledge and simply extend it with macro syntax, rather than having to learn
-a completely new way of doing things. We try to avoid foreign DSLs (domain-specific languages) and instead build on top of Rust's existing syntax.
+该库的设计方式是，你可以利用现有的所有知识，并通过宏语法扩展它，而不需要学习完全不同的做事方式。我们尽量避免使用外部的 DSL（领域特定语言），而是基于 Rust 的现有语法进行构建。
 
-This approach does a respectable job at limiting the amount of boilerplate code you have to write, and thus makes it much easier for you to
-focus on the important bits. For example, you will rarely have to repeat yourself more than necessary or register one thing in multiple places
-(e.g. declare a method, mention it in another `register` method and then repeat its name yet again as a string literal).
+这种方法有效地减少了你需要编写的样板代码，从而让你更容易专注于重要部分。例如，你很少需要重复自己的工作或在多个地方注册同一个内容（例如，声明一个方法、在另一个 `register` 方法中提到它，并且再次以字符串字面量的形式重复其名称）。
 
 
-## "Exporting"
+## “导出” ("exporting")
 
-The term "exporting" is sometimes erroneously used. Please avoid talking about "exporting classes" or "exporting methods" if you mean
-"registering". This can often cause confusion, especially among beginners.
+“导出”这个术语有时会被误用。如果你指的是“注册”，请避免谈论“导出类”或“导出方法”。这种说法往往会引起混淆，尤其是对于初学者来说。
 
-_Export_ already has two well-defined meanings in the context of Godot:
+在 Godot 的情景中，_导出_ 已经有两个明确的定义：
 
-1. Exporting a property. This does not _register_ the property with Godot, but renders it visible in the editor.
-   - GDScript uses the `@export` annotation for this, we use `#[export]`.
-   - See also [GDScript exported properties][godot-export-properties].
-
-2. Exporting projects, meaning bundling them for release.
-   - The editor provides a UI to build release versions of your game or application, so they can run as a standalone executable.
-     This process of building the executable is called "exporting".
-   - See also [Exporting projects][godot-export-projects].
+1. 导出属性。这并不将属性 _注册_ 到 Godot，而是让它在编辑器中可见。
+    •    GDScript 使用 `@export` 注解来实现这一点，而我们使用 `#[export]`。
+    •    另请参见 [GDScript 导出属性][godot-export-properties]。
+2. 导出项目，即将项目打包为发布版本。
+    •    编辑器提供了一个 UI，用于构建游戏或应用程序的发布版本，以便它们作为独立的可执行文件运行。
+构建可执行文件的过程称为“导出”。
+    •    另请参见 [导出项目][godot-export-projects]。
 
 [godot-export-properties]: https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_exports.html
 [godot-export-projects]: https://docs.godotengine.org/en/stable/tutorials/export/index.html
