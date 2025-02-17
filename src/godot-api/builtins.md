@@ -46,10 +46,9 @@
 
 ### Rust 映射
 
-Rust types in the gdext API represent the corresponding Godot types in the closest way possible. They are used in parameter and return type
-position of API functions, for example. They are accessible through `godot::builtin`, and most symbols are also part of the prelude.
+gdext API 中的 Rust 类型尽可能以最接近的方式表示相应的 Godot 类型。例如，它们被用作 API 函数的参数和返回类型。它们可以通过 `godot::builtin` 访问，且大多数符号也包含在 `prelude` 中。
 
-Most builtins have a 1:1 equivalent (e.g. `Vector2f`, `Color` etc.). The following list highlights some noteworthy mappings:
+大多数内置类型都有 1:1 的对应关系（例如:`Vector2f`、`Color` 等）。以下列表显示了一些值得注意的映射：
 
 | GDScript 类型             | Rust 类型                             | Rust 示例表达      |
 |---------------------------|---------------------------------------|-------------------------------|
@@ -68,11 +67,9 @@ Most builtins have a 1:1 equivalent (e.g. `Vector2f`, `Color` etc.). The followi
 | `SomeClass` (nullable)    | `Option<Gd<SomeClass>>`               | `None`                        |
 | `Variant` (also implicit) | `Variant`                             | `Variant::nil()`              |
 
-Note that Godot does not have nullability information in its class API yet. This means that we have to conservatively assume that objects can
-be null, and thus use `Option<Gd<T>>` instead of `Gd<T>` for object return types. This often needs unnecessary unwrapping.
+请注意，Godot 的类 API 目前尚未提供空值信息。这意味着我们必须保守地假设对象可能为 null，因此在对象返回类型上使用 `Option<Gd<T>>` 而不是 `Gd<T>`。这通常会导致不必要的解包操作。
 
-Nullable types are being looked into [on Godot side][godot-nullability-issue]. If there is no upstream solution for a while, we may consider our
-own workarounds, but it may come with manual annotation of many APIs.
+可空类型（nullable types）正在 Godot 方面进行研究 [关于 Godot 端的空值问题][godot-nullability-issue]。如果上游暂时没有解决方案，我们可能会考虑自己的变通方法，但这可能需要对许多 API 进行手动注解。
 
 ## String 类型
 
