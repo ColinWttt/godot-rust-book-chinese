@@ -5,18 +5,19 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Registering constants
+# 注册常量
 
-Constants can be used to share fixed values from Rust code to the Godot engine.
+常量可以用来将不可变值从 Rust 代码传递到 Godot 引擎中。
 
-See also [GDScript reference for constants][godot-gdscript-constants].
+另请参见 [GDScript 常量参考][godot-gdscript-constants]。
 
 
-## Constant declaration
+## 常量声明
 
-Constants are declared as `const` items in Rust, inside the inherent `impl` block of a class.
+常量在 Rust 中作为 `const` 项声明，放在类的 `impl` 块中。
 
-The attribute `#[constant]` makes it available to Godot.
+`#[constant]` 属性使其在 Godot 中可用。
+
 
 ```rust
 #[godot_api]
@@ -29,19 +30,19 @@ impl Monster {
 }
 ```
 
-Usage in GDScript would look as follows:
+在 GDScript 中的使用方式如下：
 
 ```php
 var nom = Monster.from_name_hp("Nomster", Monster.DEFAULT_HP)
 var orc = Monster.from_name_hp("Orc", 200)
 ```
 
-(This particular example might be better suited for default parameters once they are implemented, but it illustrates the point.)
+（这个例子在默认参数实现后可能更适用于默认参数，但它阐明了重点。）
 
 
-## Statics
+## 静态字段
 
-`static` fields can currently not be registered as constants.
+目前`static` 字段无法作为常量注册。
 
 
 [godot-gdscript-constants]: https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#constants
