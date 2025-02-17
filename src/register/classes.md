@@ -5,15 +5,13 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Registering classes
+# 类的注册
 
-Classes are the backbone of data modeling in Godot. If you want to build complex user-defined types in a type-safe way, you won't get around
-classes. Arrays, dictionaries and simple types only get you so far, and overusing them defeats the purpose of using a statically typed language.
+类是 Godot 数据建模的核心。如果你想以类型安全的方式构建复杂的用户定义类型，就无法避免使用类。数组、字典和简单类型只能满足基本需求，过度使用它们会使得使用静态类型语言的意义大打折扣。
 
-Rust makes class registration straightforward. As mentioned before, Rust syntax is used as a baseline, with gdext-specific additions.
+Rust 使得类注册变得简单。如前所述，Rust 语法作为基础，并加入了特定于 gdext 的扩展。
 
-
-See also [GDScript reference for classes][godot-gdscript-classes].
+另请参见 [GDScript 类参考][godot-gdscript-classes]。
 
 
 ## 目录
@@ -21,20 +19,20 @@ See also [GDScript reference for classes][godot-gdscript-classes].
 <!-- toc -->
 
 
-## Defining a Rust struct
+## 定义一个 Rust 结构体
 
-In Rust, Godot classes are represented by structs. Structs are defined as usual and can contain any number of fields. To register them with
-Godot, you need to derive the `GodotClass` trait.
+在 Rust 中，Godot 类由结构体表示。结构体的定义方式与平常一样，可以包含任意数量的字段。为了将它们注册到 Godot 中，你需要派生 `GodotClass` 特征。
 
 ```admonish info title="GodotClass trait"
-The `GodotClass` trait marks all classes known in Godot. It is already implemented for engine classes, for example `Node` or `Resource`.
-If you want to register your own classes, you need to implement `GodotClass` as well.
+`GodotClass` 特征标记了所有在 Godot 中已知的类。例如，`Node` 或 `Resource` 类已经实现了该特征。
+如果你想注册自己的类，也需要实现 `GodotClass` 特征。
 
-`#[derive(GodotClass)]` streamlines this process and takes care of all the boilerplate.  
-See [API docs][api-derive-godotclass] for detailed information.
+`#[derive(GodotClass)]` 简化了这个过程，并处理了所有的样板代码。  
+有关详细信息，请参见 [API 文档][api-derive-godotclass]。
+
 ```
 
-Let's define a simple class named `Monster`:
+让我们定义一个简单的类，命名为  `Monster`：
 
 ```rust
 #[derive(GodotClass)]
@@ -44,28 +42,25 @@ struct Monster {
 }
 ```
 
-That's it. Immediately after compiling, this class becomes available in Godot through hot reloading (before Godot 4.2, after restart).
-It won't be very useful yet, but the above definition is enough to register `Monster` in the engine.
+就这样。在编译后，这个类通过热重载（在 Godot 4.2 之前是重启后）会立即在 Godot 中可用。虽然它还不太有用，但上述定义足以将 `Monster` 类注册到引擎中。
 
 ```admonish info title="Auto-registration"
-`#[derive(GodotClass)]` _automatically_ registers the class -- you don't need an explicit `add_class()` registration call
-or a central list mentioning all classes.
+`#[derive(GodotClass)]` 会_自动_注册该类 —— 你无需显式调用 `add_class()` 注册或维护一个包含所有类的中央列表。
 
-The proc-macro internally registers the class in such a list at startup time.
+该过程宏会在启动时自动将类注册到一个这样的列表中。
 ```
 
 
-## Selecting a base class
+## 选择基类
 
-By default, the base class of a Rust class is `RefCounted`. This is consistent with GDScript when you omit the `extends` keyword.
+默认情况下，Rust 类的基类是 `RefCounted`。这和 GDScript 在省略 `extends`  关键字时的行为一致。
 
-`RefCounted` is quite useful for data bundles. As implied by the name, it allows sharing instances tracked by a reference counter;
-as such, you don't need to worry about memory management. `Resource` is a subclass of `RefCounted` and is useful for data that needs to be
-serialized to the filesystem.
+`RefCounted` 对于数据包非常有用。顾名思义，它允许通过引用计数器来共享实例，因此你不需要担心内存管理。`Resource` 是 `RefCounted` 的子类，适用于需要序列化到文件系统的数据。
 
-However, if you want your class to be part of the scene tree, you need to use `Node` (or one of its derived classes) as a base class.
+然而，如果你希望你的类成为场景树的一部分，则需要使用 `Node`（或其派生类）作为基类。
 
-Here, we use a more concrete node type, `Node3D`. This is done by specifying `#[class(base=Node3D)]` on the struct definition:
+这里，我们使用一个更具体的节点类型 `Node3D`。这可以通过在结构体定义上指定 `#[class(base=Node3D)]` 来实现：
+
 
 ```rust
 #[derive(GodotClass)]
@@ -77,10 +72,9 @@ struct Monster {
 ```
 
 
-## The base field
+## 基类字段
 
-Since Rust does not have inheritance, we need to use composition to achieve the same effect. gdext provides a `Base<T>` type, which lets us
-store the instance of the Godot superclass (base class) as a field in our `Monster` class.
+由于 Rust 没有继承机制，我们需要使用组合来实现相同的效果。gdext 提供了一个 `Base<T>`类型，它允许我们将 Godot 超类（基类）的实例作为字段存储在我们的 `Monster` 类中。
 
 ```rust
 #[derive(GodotClass)]
@@ -92,18 +86,17 @@ struct Monster {
 }
 ```
 
-The important part is the `Base<T>` type. `T` must match the base class you specified in the `#[class(base=...)]` attribute.
-You can also use the associated type `Self::Base` for `T`.
+关键部分是 `Base<T>` 类型。`T` 必须与你在 `#[class(base=...)]` 属性中指定的基类相匹配。你也可以使用关联类型 `Self::Base` 来代替 `T`。
 
-When you declare a base field in your struct, the `#[derive]` procedural macro will automatically detect the `Base<T>` type.[^inference]
-This lets you access the `Node` API through provided methods `self.base()` and `self.base_mut()`, but more on this later.
+当你在结构体中声明基类字段时，`#[derive]` 过程宏会自动检测到 `Base<T>` 类型。[注释^inference]
+这使得你可以通过提供的方法 `self.base()` 和 `self.base_mut()` 访问 `Node` API，稍后我们会详细介绍。
 
 
-## Conclusion
+## 结论
 
-You have learned how to define a Rust class and register it with Godot. You now know that different base classes exist and how to select one.
+你已经学会了如何定义一个 Rust 类并将其注册到 Godot 中。你现在知道了不同的基类存在，并且了解如何选择一个基类。
 
-The next chapters cover functions and constructors.
+接下来的章节将介绍函数和构造函数。
 
 <br>
 
