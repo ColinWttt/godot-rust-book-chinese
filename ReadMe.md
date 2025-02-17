@@ -3,7 +3,7 @@
 godot-rust中文文档是对**gdext**[用户指南][godot-rust-book]的翻译，gdext是 Godot 4的Rust绑定。它涵盖了大量的概念，并且补充了 [API 文档][gdext-docs]。对于 Godot 3，可以参考 [gdnative-book]。
 
 > [!Tip]
-> The book is deployed at **[godot-rust.github.io/book][book-web]**.
+> The book is deployed at **[colinwttt.github.io/godot-rust-book-chinese][book-web]**.
 
 
 ## Local setup
@@ -53,7 +53,7 @@ oxipng --strip safe --alpha -r src
 
 与 gdext 本身一样，gdext 手册也使用 [MPL 2.0][mpl] 许可证。
 
-[book-web]: https://godot-rust.github.io/book
+[book-web]: https://colinwttt.github.io/godot-rust-book-chinese
 [gdext]: https://github.com/godot-rust/gdext
 [godot-rust-book]: https://godot-rust.github.io/book
 [gdext-docs]: https://godot-rust.github.io/docs/gdext/master/godot

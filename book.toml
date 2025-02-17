@@ -6,9 +6,9 @@
 [book]
 authors = ["Bromeon", "godot-rust contributors"]
 multilingual = false
-language = "en"
+language = "zh-cn"
 src = "src"
-title = "The godot-rust book"
+title = "godot-rust中文文档"
 
 [preprocessor.toc]
 max-level = 3
