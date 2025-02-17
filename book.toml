@@ -4,7 +4,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 [book]
-authors = ["Bromeon", "godot-rust contributors"]
+authors = ["Bromeon", "godot-rust contributors", "Colin"]
 multilingual = false
 language = "zh-cn"
 src = "src"
@@ -21,7 +21,7 @@ assets_version = "3.0.2" # do not edit: managed by `mdbook-admonish install`
 
 # See also notes about theme in theme/ThemeNotes.md.
 [output.html]
-git-repository-url = "https://github.com/godot-rust/book"
+git-repository-url = "https://github.com/ColinWttt/godot-rust-book-chinese"
 additional-css = ["config/mdbook-admonish.css", "config/tomorrow-noon.css"]
 default-theme = "godot-rust-light"
 preferred-dark-theme = "godot-rust-dark"
