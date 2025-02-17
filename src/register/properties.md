@@ -5,14 +5,13 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Registering properties
+# 注册属性
 
-So far, you learned how to register classes and functions. This is already powerful enough to create simple applications with godot-rust,
-however you might want to give Godot more direct access to the state of your object.
+到目前为止，你已经学会了如何注册类和函数。这样就足以用 godot-rust 创建简单的应用程序了，但你可能希望让 Godot 能更直接地访问你对象的状态。
 
-This is where properties come into play. In Rust, properties are typically defined as fields of a struct.
+这时，属性就派上用场了。在 Rust 中，属性通常定义为结构体的字段。
 
-See also [GDScript reference for properties][godot-gdscript-properties].
+另请参考 [GDScript属性参考][godot-gdscript-properties].
 
 
 ## 目录
@@ -20,16 +19,13 @@ See also [GDScript reference for properties][godot-gdscript-properties].
 <!-- toc -->
 
 
-## Registering variables
+## 注册变量
 
-Previously, we defined a function `Monster::get_name()`. This works to fetch the name, but requires you to write `obj.get_name()` in GDScript.
-Sometimes, you do not need this extra encapsulation and would like to access the field directly.
+之前，我们定义了一个函数 `Monster::get_name()`，它可以用来获取名称，但在 GDScript 中使用时仍然需要写 `obj.get_name()`。有时候，你不需要额外的封装，而是希望直接访问字段。
 
-The gdext library provides an attribute `#[var]` to annotate fields that should be exposed as variables. This works like the `var` keyword in
-GDScript.
+gdext 库提供了 `#[var]` 属性来标记应当暴露为变量的字段。它的功能类似于 GDScript 中的 `var` 关键字。
 
-Starting with the earlier struct declaration, we now add the `#[var]` attribute to the `name` field. We also change the type from `String` to
-`GString`, since this field is now directly interfacing Godot.
+从之前的结构体声明开始，我们现在将 `#[var]` 属性添加到 `name` 字段上。同时，我们将类型从 `String` 改为 `GString`，因为该字段现在直接与 Godot 交互。
 
 ```rust
 #[derive(GodotClass)]
@@ -41,7 +37,7 @@ struct Monster {
 }
 ```
 
-The effect of this is that `name` is now registered as a _property_ in Godot:
+这样做的效果是，`name` 现在作为 _属性_ 在 Godot 中注册：
 
 ```php
 var monster = Monster.new()
@@ -53,7 +49,8 @@ monster.name = "Orc"
 print(monster.name) # prints "Orc"
 ```
 
-In GDScript, properties are syntactic sugar for function calls to getters and setters. You can also do so explicitly:
+在 GDScript 中，属性是对 getter 和 setter 函数调用的语法糖。你也可以显式调用这些函数：
+
 
 ```php
 var monster = Monster.new()
@@ -65,27 +62,23 @@ monster.set_name("Orc")
 print(monster.get_name()) # prints "Orc"
 ```
 
-The `#[var]` attribute also takes parameters to customize whether both getters and setters are provided, and what their names are. You can
-also write Rust methods acting as getters and setters, if you have more involved logic. See the [API documentation][api-var-export] for details.
+`#[var]`属性还可以接受参数，用来定制是否同时提供 getter 和 setter，以及它们的名称。如果你需要更复杂的逻辑，也可以编写 Rust 方法作为 getter 和 setter。详情请参阅[API 文档][api-var-export] 。
 
 
-```admonish info title="Visibility"
-Like `#[func]` functions, `#[var]` fields do not need to be `pub`. This separates visibility towards Godot and towards Rust.
+```admonish info title="可见性"
+与 `#[func]` 函数一样，`#[var]` 字段不需要是 `pub`。这将 Godot 与 Rust 的可见性隔离开来。
 
-In practice, you can still access `#[var]` fields from Rust, but via detours (e.g. Godot's reflection APIs). But this is then a deliberate
-choice; private fields are primarily preventing _accidental_ mistakes or encapsulation breaches.
+在实践中，你仍然可以通过间接方法（例如 Godot 的反射 API）访问 `#[var]` 字段。但这时是经过刻意选择的；私有字段主要是防止 _意外_ 错误或封装泄漏。
 ```
 
 
-## Exporting variables
+## 导出变量
 
-The `#[var]` attribute exposes a field to GDScript, but does not display it in the Godot editor UI.
+`#[var]` 属性将字段暴露给 GDScript，但不会在 Godot 编辑器 UI 中显示它。
 
-Making a property available to the editor is called _exporting_. Like the GDScript annotation `@export`, gdext provides exports through the
-`#[export]` attribute. You might see a pattern with naming here.
+将属性暴露到编辑器 UI 中被称为 _导出_。与 GDScript 中的 `@export` 注解类似，gdext 通过 `#[export]` 属性提供导出功能。你可能会注意到命名上的一致性。
 
-The following code not only makes the `name` field available to GDScript, but it also adds a property UI in the editor. This allows you to
-name every `Monster` instance individually, without any code!
+下面的代码不仅将 `name` 字段暴露给 GDScript，还会在编辑器中添加一个属性 UI。这样，你就可以为每个 `Monster` 实例单独命名，而无需编写任何代码！
 
 ```rust
 #[derive(GodotClass)]
@@ -97,25 +90,23 @@ struct Monster {
 }
 ```
 
-You may have noticed that there is no longer a `#[var]` attribute. This is because `#[export]` always implies `#[var]` -- the name is still
-accessible from GDScript like before.
+你可能注意到，`#[var]` 属性不见了。这是因为 `#[export]` 自动隐含了 `#[var]`，所以 `name` 仍然可以像以前一样从 GDScript 中访问。
 
-You can also declare both attributes on the same field. This is in fact necessary as soon as you provide arguments to customize them.
+你还可以将这两个属性声明在同一个字段上。如果你提供了参数来定制它们，这是必须的。
 
 
-## Enums
+## 枚举类型
 
-You can export Rust enums as properties. An exported enum appears as a drop-down field in the editor, with all available options.
-In order to do that, you need to derive three traits:
 
-- `GodotConvert` to define how the type is converted from/to Godot.
-- `Var` to allow using it as a `#[var]` property, so it can be accessed from Godot.
-- `Export` to allow using it as a `#[export]` property, so it appears in the editor UI.
+你可以将 Rust 枚举导出为属性。导出的枚举会在编辑器中显示为一个下拉菜单，包含所有可用的选项。为了做到这一点，你需要派生三个特征：
 
-Godot does not have dedicated enum types, so you can map them either as integers (e.g. `i64`) or strings (`GString`). This can be
-configured using the `via` key of the `#[godot]` attribute.
+- `GodotConvert`用于定义如何在 Godot 中转换该类型。
+- `Var` 允许将它用作 `#[var]` 属性，这样它就可以从 Godot 访问。
+- `Export` 允许将它用作 `#[export]` 属性，这样它就会出现在编辑器 UI 中。
 
-Exporting an enum can be done as follows:
+由于 Godot 本身没有专门的枚举类型，你可以将其映射为整数（例如: `i64`）或字符串（`GString`）。这可以通过 `#[Godot]` 属性的 `via` 键进行配置。
+
+以下是导出枚举的示例：
 
 ```rust
 #[derive(GodotConvert, Var, Export)]
@@ -134,23 +125,21 @@ pub struct SpaceFarer {
 }
 ```
 
-The above will show up as follows in the editor UI:
+上面的代码将在编辑器 UI 中显示如下：
 
 ![Exported enum in the Godot editor UI](images/enum-export.png)
 
-Refactoring the Rust enum may impact already serialized scenes, so be mindful if you want to choose integers or strings as the underlying
-representation:
+重构 Rust 枚举可能会影响已经序列化的场景，因此，如果你选择整数或字符串作为底层表示，请谨慎处理：
 
-- Integers enable renaming variants without breaking existing scenes, however new ones must be strictly added at the end, and existing
-  ones cannot be removed or reordered.
-- Strings allow free reordering and removing (if unused) and make debugging easier. However, you cannot rename them, and they take slightly
-  more space (only relevant if you have tens of thousands).
+- 整数可以在不破坏现有场景的情况下重命名枚举变体，但新的变体必须严格添加到末尾，现有的变体不能删除或重排序。
+- 字符串允许自由的重排序和删除（如果未使用），并且调试更加容易。但你不能重命名它们，并且它们占用的空间略多（只有在你有数万个枚举值时才需要考虑）。
 
-Of course, it is always possible to adjust existing scene files, but this involves manual search&replace and is generally error-prone.
+当然，你始终可以调整现有的场景文件，但这涉及到手动查找和替换，通常容易出错。
 
-```admonish warning title="Enums in GDScript"
-Enums are not first-class citizens in Godot. Even if you define them in GDScript, they are mostly syntactic sugar for constants.
-This declaration:
+
+```admonish warning title="GDScript中的枚举"
+枚举在 Godot 中并不是头等对象（First-class citizen）。即使你在 GDScript 中定义了它们，它们主要是常量的语法糖。
+这段声明：
 ~~~java
 enum Planet {
     EARTH,
@@ -160,7 +149,7 @@ enum Planet {
 
 @export var favorite_planet: Planet
 ~~~
-is roughly the same as:
+大致等同于：
 ~~~java
 const EARTH = 0
 const VENUS = 1
@@ -168,42 +157,42 @@ const MARS = 2
 
 @export_enum("EARTH", "VENUS", "MARS") var favorite_planet = Planet.EARTH
 ~~~
-However, the enum is not type-safe, you can just do this:
+然而，枚举不是类型安全的，你可以这样做：
 ~~~java
 var p: Planet = 5
 ~~~
-Furthermore, unless you initialize the constants with string values, you cannot retrieve their names, making debugging harder. There is no
-reflection either, such as "get number of enum values" or "iterate over all of them". If you have the choice, consider keeping enums in Rust.
+此外，除非你用字符串值初始化常量，否则你无法检索它们的名称，这会让调试更加困难。并且没有反射机制，比如“获取枚举值的数量”或“遍历所有枚举值”。如果你有选择，建议保持枚举类型在 Rust 中定义。
+
 ```
 
 
-## Advanced usage
+## 高级用法
 
-Both `#[var]` and `#[export]` attributes accept parameters to further customize how properties are registered in Godot.
-Consult the [API documentation][api-var-export] for details.
+`#[var]` 和 `#[export]` 属性都接受参数，允许进一步定制属性在 Godot 中的注册方式。有关详细信息，请查阅 [API 文档][api-var-export]。
 
-```admonish info title="PackedArray mutability"
-`Packed*Array` types use copy-on-write semantics, meaning every new instance can be considered an independent copy. When a Rust-side packed
-array is registered as a property, GDScript will create a new instance of the array when you mutate it, making changes invisible to Rust code.
-There is a [GitHub issue][gh-godot-packedarray] with more details.
+```admonish info title="PackedArray 可变性"
+`Packed*Array` 类型使用写时复制语义，意味着每个新实例都可以看作是一个独立的副本。当 Rust 端的packed
+array作为属性注册时，GDScript 在你修改它时会创建一个新实例，从而使修改对 Rust 代码不可见。
 
-Instead, use `Array<T>` or register designated `#[func]` methods that perform the mutation on Rust side.
+有一个 [GitHub issue][gh-godot-packedarray] 讨论了更多细节。
+
+因此，最好使用 `Array<T>` 或注册指定的 `#[func]` 方法，在 Rust 端执行变更操作。
+
 ```
 
 
-## Custom types with `#[var]` and `#[export]`
+## 自定义类型的  `#[var]` 和 `#[export]`
 
-If you want to register properties of user-defined types, so they become accessible from GDScript code (`#[var]`) or additionally from the
-editor (`#[export]`), then you can implement the `Var` and `Export` traits, respectively.
+如果你希望注册用户自定义类型的属性，以便它们能从 GDScript 代码（`#[var]`）或编辑器（`#[export]`）中访问，那么你可以分别实现 `Var` 和 `Export` 特性。
 
-These traits also come with derive macros, [`#[derive(Var)]`][api-derive-var] and [`#[derive(Export)]`][api-derive-export].
+这些特征也提供了派生宏，分别是 [`#[derive(Var)]`][api-derive-var] 和 [`#[derive(Export)]`][api-derive-export]。
 
-```admonish warning title="Performance"
-Enabling all sorts of types for `Var` and `Export` seems convenient, but keep in mind that your conversion functions are invoked every time
-the engine accesses the property, which may sometimes be behind the scenes. Especially for `#[export]` fields, interactions with the editor UI
-or serialization to/from scene files can cause a quite a bit of traffic.
 
-As a general rule, try to stay close to Godot's own types, e.g. `Array`, `Dictionary` or `Gd`. These are reference-counted or simple pointers.
+```admonish warning title="性能"
+启用各种类型的 `Var` 和 `Export` 看起来很方便，但请记住，每次引擎访问属性时，你的转换函数都会被调用，有时可能是在后台。特别是对于 `#[export]` 字段，编辑器 UI 的交互或从场景文件的序列化和反序列化可能会产生大量的流量。
+
+作为一般规则，尽量使用 Godot 自身的类型，例如 `Array`、`Dictionary` 或 `Gd`。这些类型是引用计数或简单的指针。
+
 ```
 
 
