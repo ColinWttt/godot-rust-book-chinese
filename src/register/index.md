@@ -31,12 +31,12 @@
 在 Godot 的情景中，_导出_ 已经有两个明确的定义：
 
 1. 导出属性。这并不将属性 _注册_ 到 Godot，而是让它在编辑器中可见。
-    •    GDScript 使用 `@export` 注解来实现这一点，而我们使用 `#[export]`。
-    •    另请参见 [GDScript 导出属性][godot-export-properties]。
+    - GDScript 使用 `@export` 注解来实现这一点，而我们使用 `#[export]`。
+    - 另请参见 [GDScript 导出属性][godot-export-properties]。
 2. 导出项目，即将项目打包为发布版本。
-    •    编辑器提供了一个 UI，用于构建游戏或应用程序的发布版本，以便它们作为独立的可执行文件运行。
-构建可执行文件的过程称为“导出”。
-    •    另请参见 [导出项目][godot-export-projects]。
+    - 编辑器提供了一个 UI，用于构建游戏或应用程序的发布版本，以便它们作为独立的可执行文件运行。
+      构建可执行文件的过程称为“导出”。
+    - 另请参见 [导出项目][godot-export-projects]。
 
 [godot-export-properties]: https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_exports.html
 [godot-export-projects]: https://docs.godotengine.org/en/stable/tutorials/export/index.html
