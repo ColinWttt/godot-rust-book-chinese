@@ -9,6 +9,7 @@
 
 一般来说，gdext 库以尽可能符合 Rust 风格的方式映射 Godot 函数。有时，函数签名（signatures）会与 GDScript 略有不同，本文将详细介绍这些差异。
 
+
 ## 目录
 <!-- toc -->
 
@@ -18,13 +19,16 @@ Godot 类位于 `godot::classes` 模块中。一些常用的类，如 `Node`、`
 
 Godot 的大部分功能是通过类内部的函数暴露的。请随时查看 [API 文档][api-classes] 以获取更多信息。
 
+
 ## Godot 函数
 
-像 Rust 中通常一样，函数分为 _方法_（带有 `&self`/`&Godot 类位于 godot::classes 模块中。一些常用的类，如 Node、RefCounted、Node3D 等，还会在 godot::prelude 中重新导出。
+像 Rust 中通常一样，函数分为 _方法_（带有 `&self`/`&Godot 类位于 Godot::classes 模块中。一些常用的类，如 Node、RefCounted、Node3D 等，还会在 Godot::prelude 中重新导出。
 
 Godot 的大部分功能是通过类内部的函数暴露的。请随时查看 [API 文档][api-classes] 以获取更多信息。mut self`接收者）和 _关联函数_（在 Godot 中称为“静态函数”）。
 
-要访问 `Gd<T>` 指针上的 Godot API，只需直接在 `Gd`对象上调用方法即可。这是因为 `Deref` 和 `DerefMut` 特征，它们通过 `Gd` 为你提供对象引用。在 [后续章节][book-function-objects] 中，我们还将看到如何调用在 Rust 中定义的函数。
+要访问 `Gd<T>` 指针上的 Godot API，只需直接在 `Gd`对象上调用方法即可。这是因为 `Deref` 和 `DerefMut` 特征，它们通过 `Gd` 为你提供对象引用。
+
+在 [后续章节][book-function-objects] 中，我们还将看到如何调用在 Rust 中定义的函数。
 
 ```rust
 // Call with &self receiver.
@@ -47,6 +51,7 @@ Associated functions (called "static" in GDScript) are invoked on the type itsel
 Node::print_orphan_nodes();
 ```
 
+
 ## 单例（Singletons）
 
 Singleton classes (not to be confused with _autoloads_, which are sometimes called singletons, too) provide a `singleton()` function to access
@@ -64,6 +69,7 @@ input.set_mouse_mode(MouseMode::CAPTURED);
 
 There are [discussions][issue-singleton-no-receiver] about providing methods directly on the singleton type instead of requiring the
 `singleton()` call. This would however lose the mutability information, among a few other things.
+
 
 ## 默认参数
 

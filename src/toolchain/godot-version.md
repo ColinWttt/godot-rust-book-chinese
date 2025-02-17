@@ -11,6 +11,7 @@ Supporting multiple Godot versions is a key feature of gdext. Especially if you 
 editor plugin), this page elaborates your choices and their trade-offs in detail. The previous chapter about [compatibility][compat] is
 expected as a prerequisite.
 
+
 ## 目录
 
 <!-- toc -->
@@ -33,6 +34,7 @@ than that version.[^compat-4-0] Therefore, the lower your API version, the more 
 ```admonish abstract title="In other words:"
 API version <= runtime version
 ```
+
 
 ### 为什么支持多个版本?
 
@@ -67,6 +69,7 @@ A longer compatibility range gives users more flexibility regarding _when_ they 
 iterate at varying pace, and enables projects to depend on each other. At scale, this enables a vibrant ecosystem of extensions around Godot.
 ```
 
+
 ### Cutting edge vs. compatibility
 
 Lower API versions allow supporting a wider range of Godot versions. For example, if you set the API version to 4.2, you can run it in Godot
@@ -78,9 +81,11 @@ select 4.2, you will not see classes and functions introduced in 4.3.
 This is the core trade-off, and you need to decide based on your use case. If you are unsure, you can always start with a conservatively low API
 version, and bump it when you find yourself needing more recent features.
 
+
 ## Selecting the API version in gdext
 
 Now that the _why_ part is clarified, let's get into _how_ you can choose the API version in gdext.
+
 
 ### 默认版本
 
@@ -88,6 +93,7 @@ By default, gdext uses the **current minor release** of Godot 4, with patch 0. T
 for that minor release.
 
 Example: if the current release is Godot 4.3.5, then gdext will use API version 4.3.0.
+
 
 ### Lower minor version
 
@@ -127,6 +133,7 @@ To require a minimum patch level, use a `api-4-x-y` feature:
 godot = { ..., features = ["api-4-2-1"] }
 ```
 
+
 ## 自定义 Godot 版本
 
 If you want to freely choose a Godot binary on your local machine from which the GDExtension API is generated, you can use the Cargo feature
@@ -140,6 +147,7 @@ Note that we [do not give any support or compatibility guarantees][no-custom-sup
 
 Working with the `api-custom` feature requires the `bindgen` crate, as such you may need to install the LLVM toolchain.
 Consult the [setup page][setup-llvm] for more information.
+
 
 ### Setting `GODOT4_BIN` to a relative path
 

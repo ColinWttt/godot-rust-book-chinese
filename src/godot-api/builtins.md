@@ -10,6 +10,7 @@
 所谓的“内置类型”或简称“内置”（builtins）是 Godot 提供的基本类型。值得注意的是，这些并不是 _类_（_classes_）。
 另请参见 [Godot 中的基本内置类型][godot-docs-builtins]。
 
+
 ## 目录
 <!-- toc -->
 
@@ -44,6 +45,7 @@
 - Color: `Color`
 - Resource ID: `RID`
 
+
 ### Rust 映射
 
 gdext API 中的 Rust 类型尽可能以最接近的方式表示相应的 Godot 类型。例如，它们被用作 API 函数的参数和返回类型。它们可以通过 `godot::builtin` 访问，且大多数符号也包含在 `prelude` 中。
@@ -71,6 +73,7 @@ gdext API 中的 Rust 类型尽可能以最接近的方式表示相应的 Godot 
 
 可空类型（nullable types）正在 Godot 方面进行研究 [关于 Godot 端的空值问题][godot-nullability-issue]。如果上游暂时没有解决方案，我们可能会考虑自己的变通方法，但这可能需要对许多 API 进行手动注解。
 
+
 ## String 类型
 
 Godot 提供 三种 string 类型: `String` ([`GString`][api-gstring] in Rust), [`StringName`][api-stringname], 和 [`NodePath`][api-nodepath].
@@ -92,6 +95,7 @@ Outside argument contexts, the `From` trait is implemented for string conversion
 
 `StringName` in particular provides a direct conversion from C-string literals such as `c"string"`, [introduced in Rust 1.77][rust-c-strings].
 This can be used for _static_ C-strings, i.e. ones that remain allocated for the entire program lifetime. Don't use them for short-lived ones.
+
 
 ## Arrays 和 dictionaries
 
@@ -166,6 +170,7 @@ for (key, value) in d.iter_shared() {
     println!("Key: {key}, value: {value}");
 }
 ```
+
 
 ## Packed arrays
 

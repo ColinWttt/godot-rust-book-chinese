@@ -18,7 +18,7 @@ env:
   MDBOOK_ADMONISH_VERSION: "1.18.0"
   MDBOOK_BIN: "/tmp/mdbook-bin"
   OXIPNG_VERSION: "9.1.1"
-  MARKDOWNLINT_CLI2_VERSION: "0.13.0"
+  MARKDOWNLINT_CLI2_VERSION: "0.17.2"
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
