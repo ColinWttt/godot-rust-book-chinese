@@ -189,7 +189,9 @@ let part: PackedByteArray = bytes.subarray(1, 3); // 1..3, or 1..=2
 assert_eq!(part.as_slice(), &[0x0B, 0x0C]);
 ```
 
-与`Array`不同，`Packed*Array`使用写时复制（copy-on-write），而不是引用计数。当你克隆一个`Packed*Array`时，你会得到一个新的独立实例。只要不修改任何实例，克隆是便宜的。一旦使用写操作（任何带有`&mut self`的操作），`Packed*Array`会分配自己的内存并复制数据。
+与`Array`不同，`Packed*Array`使用写时复制（copy-on-write），而不是引用计数。当你克隆一个`Packed*Array`时，你会得到一个新的独立实例。只要不修改任何实例，克隆是便宜的。
+
+一旦使用写操作（任何带有`&mut self`的操作），`Packed*Array`会分配自己的内存并复制数据。
 
 <br>
 
