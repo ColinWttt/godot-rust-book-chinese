@@ -98,7 +98,7 @@ struct Monster {
 ## 枚举类型
 
 
-你可以将 Rust 枚举导出为属性。导出的枚举会在编辑器中显示为一个下拉菜单，包含所有可用的选项。为了做到这一点，你需要派生三个特征：
+你可以将 Rust 枚举导出为属性。导出的枚举会在编辑器中显示为一个下拉菜单，包含所有可用的选项。为了做到这一点，你需要派生三个trait：
 
 - `GodotConvert`用于定义如何在 Godot 中转换该类型。
 - `Var` 允许将它用作 `#[var]` 属性，这样它就可以从 Godot 访问。
@@ -185,7 +185,7 @@ array作为属性注册时，GDScript 在你修改它时会创建一个新实例
 
 如果你希望注册用户自定义类型的属性，以便它们能从 GDScript 代码（`#[var]`）或编辑器（`#[export]`）中访问，那么你可以分别实现 `Var` 和 `Export` 特性。
 
-这些特征也提供了派生宏，分别是 [`#[derive(Var)]`][api-derive-var] 和 [`#[derive(Export)]`][api-derive-export]。
+这些trait也提供了派生宏，分别是 [`#[derive(Var)]`][api-derive-var] 和 [`#[derive(Export)]`][api-derive-export]。
 
 
 ```admonish warning title="性能"

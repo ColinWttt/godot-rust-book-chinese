@@ -60,7 +60,7 @@ struct Monster {
 
 ### 手动定义 `init`
 
-我们可以通过复写特征的关联函数 `init` 来提供手动定义的构造函数：
+我们可以通过复写trait的关联函数 `init` 来提供手动定义的构造函数：
 
 ```rust
 #[derive(GodotClass)]
@@ -219,7 +219,7 @@ impl MonsterConfig {
 
 ## 析构函数
 
-如果你通过 [RAII][wiki-raii] 管理内存，通常你不需要声明自己的析构函数。但是如果你确实需要自定义的清理逻辑，只需为你的类型声明 `Drop` 特征：
+如果你通过 [RAII][wiki-raii] 管理内存，通常你不需要声明自己的析构函数。但是如果你确实需要自定义的清理逻辑，只需为你的类型声明 `Drop` trait：
 
 ```rust
 impl Drop for Monster {

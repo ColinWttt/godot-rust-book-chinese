@@ -24,7 +24,7 @@ Godot 的大部分功能是通过类内部的函数暴露的。请随时查看 [
 
 像 Rust 中通常一样，函数分为 _方法_（带有 `&self`/`mut self`接收者）和 _关联函数_（在 Godot 中称为“静态函数”）。
 
-要访问 `Gd<T>` 指针上的 Godot API，只需直接在 `Gd`对象上调用方法即可。这是因为 `Deref` 和 `DerefMut` 特征，它们通过 `Gd` 为你提供对象引用。
+要访问 `Gd<T>` 指针上的 Godot API，只需直接在 `Gd`对象上调用方法即可。这是因为 `Deref` 和 `DerefMut` trait，它们通过 `Gd` 为你提供对象引用。
 
 在 [后续章节][book-function-objects] 中，我们还将看到如何调用在 Rust 中定义的函数。
 

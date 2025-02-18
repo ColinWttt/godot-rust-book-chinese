@@ -21,11 +21,11 @@ Rust 使得类注册变得简单。如前所述，Rust 语法作为基础，并�
 
 ## 定义一个 Rust 结构体
 
-在 Rust 中，Godot 类由结构体表示。结构体的定义方式与平常一样，可以包含任意数量的字段。为了将它们注册到 Godot 中，你需要派生 `GodotClass` 特征。
+在 Rust 中，Godot 类由结构体表示。结构体的定义方式与平常一样，可以包含任意数量的字段。为了将它们注册到 Godot 中，你需要派生 `GodotClass` trait。
 
-```admonish info title="GodotClass 特征"
-`GodotClass` 特征标记了所有在 Godot 中已知的类。例如，`Node` 或 `Resource` 类已经实现了该特征。
-如果你想注册自己的类，也需要实现 `GodotClass` 特征。
+```admonish info title="GodotClass trait"
+`GodotClass` trait标记了所有在 Godot 中已知的类。例如，`Node` 或 `Resource` 类已经实现了该trait。
+如果你想注册自己的类，也需要实现 `GodotClass` trait。
 
 `#[derive(GodotClass)]` 简化了这个过程，并处理了所有的样板代码。  
 有关详细信息，请参见 [API 文档][api-derive-godotclass]。
