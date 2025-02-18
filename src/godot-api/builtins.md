@@ -90,7 +90,7 @@ label.set_text(&gstring);          // GString
 label.set_text(string_name.arg()); // StringName
 ```
 
-在参数上下文之外，`From` trait 用于字符串转换：`GString::From("my string")`, ，或者使用 `"my_string".into()`。
+在参数上下文之外，`From` trait 用于字符串转换：`GString::From("my string")`，或者使用 `"my_string".into()`。
 
 特别是，`StringName`提供了从C字符串字面量（如`c"string"`）的直接转换，[该特性在Rust 1.77中引入][rust-c-strings]。
 这可以用于 _静态_ C字符串，即那些在整个程序生命周期内保持分配的字符串。不要将其用于短生命周期的字符串。
@@ -189,7 +189,7 @@ let part: PackedByteArray = bytes.subarray(1, 3); // 1..3, or 1..=2
 assert_eq!(part.as_slice(), &[0x0B, 0x0C]);
 ```
 
-与`Array`不同，打包数组使用写时复制（copy-on-write），而不是引用计数。当你克隆一个打包数组时，你会得到一个新的独立实例。只要不修改任何实例，克隆是便宜的。一旦使用写操作（任何带有`&mut self`的操作），打包数组会分配自己的内存并复制数据。
+与`Array`不同，`Packed*Array`使用写时复制（copy-on-write），而不是引用计数。当你克隆一个`Packed*Array`时，你会得到一个新的独立实例。只要不修改任何实例，克隆是便宜的。一旦使用写操作（任何带有`&mut self`的操作），`Packed*Array`会分配自己的内存并复制数据。
 
 <br>
 
