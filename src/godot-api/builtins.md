@@ -20,13 +20,13 @@
 
 **简单类型**
 
-- Boolean: `bool`
-- Numeric: `int`, `float`
+- 布尔: `bool`
+- 数值: `int`, `float`
 
 **复合类型**
 
 - Variant (able to hold anything): `Variant`
-- String types: `String`, `StringName`, `NodePath`
+- String 类型: `String`, `StringName`, `NodePath`
 - Ref-counted containers: `Array` (`Array[T]`), `Dictionary`
 - Packed arrays: `Packed*Array` for following element types:  
   `Byte`, `Int32`, `Int64`, `Float32`, `Float64`, `Vector2`, `Vector3`, `Vector4`[^packed-vec4], `Color`, `String`
@@ -76,12 +76,11 @@ gdext API 中的 Rust 类型尽可能以最接近的方式表示相应的 Godot 
 
 ## String 类型
 
-Godot 提供 三种 string 类型: `String` ([`GString`][api-gstring] in Rust), [`StringName`][api-stringname], 和 [`NodePath`][api-nodepath].
-`GString` is used as a general-purpose string, while `StringName` is often used for identifiers like class or action names.
-The idea is that `StringName` is cheap to construct and compare.[^string-name-Rust]
+Godot 提供 三种 string 类型: `String` (在 Rust 中是[`GString`][api-gstring]), [`StringName`][api-stringname], 和 [`NodePath`][api-nodepath]。
+`GString` 用作通用字符串，而 `StringName` 通常用于标识符，例如类名或动作名称。`StringName` 的特点是构造和比较非常高效。[^string-name-Rust]
 
-When working with Godot APIs, you can pass references to the parameter type (e.g. `&GString`), as well as Rust strings `&str`, and `&String`.
-To convert different string types in argument contexts (e.g. `StringName` -> `GString`), you can call `arg()`.
+在使用 Godot API 时，你可以将参数类型的引用传递给函数（例如 `&GString`），以及 Rust 字符串 `&str` 和 `&String`。
+要在参数上下文中转换不同的字符串类型（例如 `StringName` -> `GString`），你可以调用 `arg()`。
 
 ```rust
 // Label::set_text() takes impl AsArg<GString>.
@@ -91,22 +90,21 @@ label.set_text(&gstring);          // GString
 label.set_text(string_name.arg()); // StringName
 ```
 
-Outside argument contexts, the `From` trait is implemented for string conversions: `GString::From("my string")`, or `"my_string".into()`.
+在参数上下文之外，`From` trait 用于字符串转换：`GString::From("my string")`, ，或者使用 `"my_string".into()`。
 
-`StringName` in particular provides a direct conversion from C-string literals such as `c"string"`, [introduced in Rust 1.77][rust-c-strings].
-This can be used for _static_ C-strings, i.e. ones that remain allocated for the entire program lifetime. Don't use them for short-lived ones.
+特别是，`StringName`提供了从C字符串字面量（如`c"string"`）的直接转换，[该特性在Rust 1.77中引入][rust-c-strings]。
+这可以用于 _静态_ C字符串，即那些在整个程序生命周期内保持分配的字符串。不要将其用于短生命周期的字符串。
 
 
-## Arrays 和 dictionaries
+## 数组和字典
 
-Godot's linear collection type is [`Array<T>`][api-array]. It is generic over its element type `T`, which can be one of the supported Godot types
-(generally anything that can be represented by `Variant`). A special type `VariantArray` is provided as an alias for `Array<Variant>`, which is
-used when the element type is dynamically typed.
+Godot的线性集合类型是 [`Array<T>`][api-array]. 它是对元素类型`T`的泛型，可以是任何支持的Godot类型（通常是可以由`Variant`表示的任何类型）。
+提供了一个特殊类型`VariantArray`，作为`Array<Variant>`的别名，当元素类型是动态类型时使用。
 
-[`Dictionary`][api-dictionary] is a key-value store, where both keys and values are `Variant`. Godot currently does not support generic
-dictionaries, although this feature is [under discussion][godot-generic-dicts].
 
-Arrays and dictionaries can be constructed using three macros:
+[`Dictionary`][api-dictionary] 是一个键值对存储，其中键和值都是`Variant`。Godot目前不支持泛型字典，尽管这个特性正在[讨论中][godot-generic-dicts].
+
+数组和字典可以使用三个宏来构建：
 
 ```rust
 let a = array![1, 2, 3];          // Array<i64>
@@ -114,25 +112,23 @@ let b = varray![1, "two", true];  // Array<Variant>
 let c = dict!{"key": "value"};    // Dictionary
 ```
 
-Their API is similar, but not identical to Rust's standard types `Vec` and `HashMap`. An important difference is that `Array` and `Dictionary`
-are reference-counted, which means that `clone()` will not create an independent copy, but another reference to the same instance. Furthermore,
-since internal elements are stored as variants, they are not accessible by reference. This is why the `[]` operator (`Index/IndexMut` traits)
-is absent, and `at()` is provided instead, returning by value.
+它们的API类似，但与Rust的标准类型`Vec`和`HashMap`并不完全相同。一个重要的区别是，`Array`和`Dictionary`是引用计数的，这意味着`clone()`不会创建一个独立的副本，而是另一个对同一实例的引用。
+此外，由于内部元素以`variant`存储，它们不能通过引用访问。这就是为什么缺少`[]`操作符（`Index/IndexMut`traits，而是提供了`at()`方法，它返回的是值。
 
 ```rust
 let a = array![0, 11, 22];
 
 assert_eq!(a.len(), 3);
-assert_eq!(a.at(1), 11);         // Panics on out-of-bounds.
-assert_eq!(a.get(1), Some(11));  // Also by value, not Some(&11).
+assert_eq!(a.at(1), 11);         // 超出边界会panic。
+assert_eq!(a.get(1), Some(11));  // 也返回值，而不是Some(&11)。
 
-let mut b = a.clone();   // Increment reference-count.
-b.set(2, 33);            // Modify new ref.
-assert_eq!(a.at(2), 33); // Original array has changed.
+let mut b = a.clone();   // 增加 reference-count.
+b.set(2, 33);            // 修改新引用。
+assert_eq!(a.at(2), 33); // 原始 array 已经改变。
 
 b.clear();
 assert!(b.is_empty());
-assert_eq!(b, Array::new()); // new() creates an empty array.
+assert_eq!(b, Array::new()); // new() 创建一个空 array.
 ```
 
 ```rust
@@ -143,18 +139,16 @@ let c = dict! {
 };
 
 assert_eq!(c.len(), 3);
-assert_eq!(c.at("str"), "hello".to_variant());    // Panics on missing key.
-assert_eq!(c.get("int"), Some(42.to_variant()));  // Option<Variant>, again by value.
+assert_eq!(c.at("str"), "hello".to_variant());    // 没找到键会panic。
+assert_eq!(c.get("int"), Some(42.to_variant()));  // Option<Variant>，同样是值。
 
-let mut d = c.clone();            // Increment reference-count.
-d.insert("float", 3.14);          // Modify new ref.
-assert!(c.contains_key("float")); // Original dict has changed.
+let mut d = c.clone();            // 增加 reference-count.
+d.insert("float", 3.14);          // 修改新引用。
+assert!(c.contains_key("float")); // 原始字典已经改变。
 ```
 
-To iterate, you can use `iter_shared()`. This method works almost like `iter()` on Rust collections, but the name highlights that you do not
-have unique access to the collection during iteration, since there might exist another reference to the collection. This also means it's your
-responsibility to ensure that the array/dictionary is not modified in unintended ways during iteration (which should be safe, but may lead to
-data inconsistencies).
+要进行迭代，可以使用`iter_shared()`。这个方法的工作方式几乎与Rust集合的`iter()`相似，但其名称强调了在迭代期间你并没有对集合的唯一访问权，因为可能存在对集合的其他引用。
+这也意味着你有责任确保在迭代过程中，数组或字典没有被不必要地修改（虽然应该是安全的，但可能会导致数据不一致）。
 
 ```rust
 let a = array!["one", "two", "three"];
@@ -174,30 +168,28 @@ for (key, value) in d.iter_shared() {
 
 ## Packed arrays
 
-[`Packed*Array`][api-packed-array] types are used for storing elements space-efficiently ("packed") in contiguous memory.
-The `*` stands for the element type, e.g. `PackedByteArray` or `PackedVector3Array`.
+[`Packed*Array`][api-packed-array] 类型用于在连续的内存中高效地存储元素（“打包”）。
+`*` 代表元素类型，例如 `PackedByteArray` 或 `PackedVector3Array`.
 
 ```rust
 // Create from slices.
 let bytes = PackedByteArray::from(&[0x0A, 0x0B, 0x0C]);
 let ints = PackedInt32Array::from(&[1, 2, 3]);
 
-// Get/set individual elements using Index and IndexMut operators.
+// 使用Index和IndexMut操作符来获取/设置单个元素。
 ints[1] = 5;
 assert_eq!(ints[1], 5);
 
-// Access as Rust shared/mutable slices.
+//  作为Rust shared/mutable slices访问。
 let bytes_slice: &[u8] = b.as_slice();
 let ints_slice: &mut [i32] = i.as_mut_slice();
 
-// Access sub-ranges of the array using the same type.
+// 使用相同类型访问数组的子范围。
 let part: PackedByteArray = bytes.subarray(1, 3); // 1..3, or 1..=2
 assert_eq!(part.as_slice(), &[0x0B, 0x0C]);
 ```
 
-Unlike `Array`, packed arrays use copy-on-write instead of reference counting. When you clone a packed array, you get a new independent instance.
-Cloning is cheap as long as you don't modify either instance. Once you use a write operation (anything with `&mut self`), the packed array will
-allocate its own memory and copy the data.
+与`Array`不同，打包数组使用写时复制（copy-on-write），而不是引用计数。当你克隆一个打包数组时，你会得到一个新的独立实例。只要不修改任何实例，克隆是便宜的。一旦使用写操作（任何带有`&mut self`的操作），打包数组会分配自己的内存并复制数据。
 
 <br>
 
@@ -205,18 +197,13 @@ allocate its own memory and copy the data.
 
 **Footnotes**
 
-[^packed-vec4]: `PackedVector4Array` is only available since Godot version 4.3; added in [PR #85474][godot-packed-vector4].
+[^packed-vec4]: `PackedVector4Array` 仅在Godot 4.3版本中可用；在 [PR #85474][godot-packed-vector4]中添加。.
 
-[^num-types]: Godot's `int` and `float` types are canonically mapped to `i64` and `f64` in Rust. However, some Godot APIs specify the domain of
-these types more specifically, so it's possible to encounter `i8`, `u64`, `f32` etc.
+[^num-types]: Godot的`int`和`float`类型在Rust中通常映射为`i64`和`f64`。然而，某些Godot API更加具体地指定了这些类型的域，因此可能会遇到`i8`、`u64`、`f32`等类型。
 
-[^str-types]: String types `GString`, `StringName`, and `NodePath` can be passed into Godot APIs as string literals, hence the `"string"` syntax
-in this example. To assign to your own value, e.g. of type `GString`, you can use `GString::from("string")` or `"string"`.
+[^str-types]: 字符串类型`GString`、`StringName`和`NodePath`可以作为字符串字面量传递给Godot API，因此在这个示例中使用了`"string"`语法。要为自己的值赋值，例如类型为`GString`，可以使用`GString::from("string")` 或 `"string"`.
 
-[^string-name-Rust]: When constructing `StringName` from `&str` or `String`, the conversion is rather expensive, since UTF-8 is re-encoded as
-UTF-32. As Rust recently introduced C-string literals (`c"hello"`), we can now directly construct from them in case of ASCII. This is more
-efficient, but keeps memory allocated until shutdown, so don't use it for rarely used temporaries.
-See [API docs][api-stringname] and [issue #531][issue-stringname-perf] for more information.
+[^string-name-Rust]: 当从`&str`或`String`构造`StringName`时，转换相当昂贵，因为UTF-8会被重新编码为UTF-32。由于Rust最近引入了C字符串字面量（`c"hello"`），如果是ASCII字符串，现在我们可以直接从它们构造`StringName`。这种方式会更高效，但是会使内存在程序关闭之前一直保持分配，因此不要将其用于生命周期短暂的临时字符串。有关更多信息，请参阅[API文档][api-stringname] 和 [issue #531][issue-stringname-perf]。
 
 
 [api-array]: https://godot-rust.github.io/docs/gdext/master/godot/builtin/struct.Array.html
