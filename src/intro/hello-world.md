@@ -161,8 +161,6 @@ macos.release.arm64 =    "res://../rust/target/release/lib{YourCrate}.dylib"
 ```admonish note title="导出路径"
 导出项目时，您需要使用 `res://` _内部_ 的路径。  
 不支持像 `..` 这样的外部路径。
-When exporting your project, you need to use paths _inside_ `res://`.  
-Outside paths like `..` are not supported. 
 ```
 
 ```admonish note title="自定义 Rust 目标"
