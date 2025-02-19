@@ -5,42 +5,42 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Setup
+# 设置
 
-Before we can start writing Rust code, we need to install a few tools.
-
-
-## Godot Engine
-
-While you can write Rust code without the Godot engine, we highly recommend to install Godot for quick feedback loops.
-For the rest of the tutorial, we assume that you have Godot 4 installed and available either:
-
-- in your `PATH` as `godot4`,
-- or an environment variable called `GODOT4_BIN`, containing the path to the Godot executable.
+在开始编写 Rust 代码之前，我们需要安装一些工具。
 
 
-### Godot from pre-built binaries
+## Godot 引擎
 
-Binaries of Godot 4 can be downloaded [from the official website][godot-download].  
-For beta and older versions, you can also check the [download archive][godot-download-archive].
+虽然可以在没有 Godot 引擎的情况下编写 Rust 代码，但我们强烈推荐安装 Godot，以便快速获得反馈。
+在本教程的其余部分，我们假设您已经安装了 Godot 4，并且可以通过以下方式之一访问它：
+
+- 在您的 `PATH` 设置 `godot4`，
+- 或者设置一个名为 `GODOT4_BIN` 的环境变量，包含 Godot 可执行文件的路径。
 
 
-### Installing Godot via command-line
+### 从预构建的二进制文件安装 Godot
+
+您可以[从官方网站][godot-download]下载 Godot 4 的二进制文件。
+对于 Beta 版本和旧版本，您也可以查看 [下载归档][godot-download-archive]。
+
+
+### 通过命令行安装 Godot
 
 ```bash
 # --- Linux ---
-# For Ubuntu or Debian-based distros.
+# 对于 Ubuntu 或 基于Debian的 distros.
 apt install godot
 
-# For Fedora/RHEL.
+# 对于 Fedora/RHEL.
 dnf install godot
 
-# Distro-independent through Flatpak.
+# 通过 Flatpak 安装，适用于所有发行版
 flatpak install flathub org.godotengine.Godot
 
 
 # --- Windows ---
-# Windows installations can be made through WinGet.
+# 可以通过 WinGet 安装 Windows 版本
 winget install --id=GodotEngine.GodotEngine -e
 
 
@@ -48,19 +48,17 @@ winget install --id=GodotEngine.GodotEngine -e
 brew install godot
 ```
 
-```admonish note title="Other Godot versions"
-If you plan to target Godot versions different from the latest stable release, please read [Selecting a Godot version][godot-version].
+```admonish note title="其他 Godot 版本"
+如果您打算使用不同于最新稳定版本的 Godot 版本，请阅读 [选择 Godot 版本][godot-version]。
 ```
 
 
 ## Rust
 
-[rustup] is the preferred way to install the Rust toolchain. It includes the compiler, standard library, Cargo (the package manager)
-as well as tools like rustfmt or clippy. Visit the website to download binaries or installers for your platform. Alternatively, you can
-install it via command-line.
+[rustup] 是安装 Rust 工具链的首选方式。它包含了编译器、标准库、Cargo（包管理器），以及如 rustfmt 或 clippy 等工具。请访问官网以下载适合您平台的二进制文件或安装程序。或者，您也可以通过命令行安装。
 
 
-### Installing rustup via command-line
+### 通过命令行安装 rustup
 
 ```bash
 # Linux (distro-independent)
@@ -73,7 +71,7 @@ winget install --id=Rustlang.Rustup -e
 brew install rustup
 ```
 
-After installation of rustup and the `stable` toolchain, you can verify that they are working:
+安装 `rustup` 和 `stable` 工具链后，您可以通过以下命令验证它们是否工作正常：
 
 ```bash
 $ rustc --version
@@ -84,17 +82,16 @@ rustc 1.74.1 (a28077b28 2023-12-04)
 ## LLVM
 
 ```admonish tip
-In general, you do **NOT** need to install LLVM.
+通常来说，您**不**需要安装 LLVM。
 ```
 
-This was necessary in the past due to `bindgen`, which [depends on LLVM][llvm-bindgen].
-However, we now provide pre-built artifacts, so that most users can simply add the Cargo dependency and start immediately.
-This also significantly reduces initial compile times, as `bindgen` was quite heavyweight with its many transitive dependencies.
+过去，由于 `bindgen` [依赖于 LLVM][llvm-bindgen]，因此需要安装它。
+不过，现在我们提供了预构建的构件，因此大多数用户只需添加 Cargo 依赖项并立即开始使用，这样做显著减少了初始的编译时间，因为 `bindgen`以前依赖了许多传递性的依赖项，导致体积较大。
 
-You will still need LLVM if you plan to use the `api-custom` feature, for example if you have a forked version of Godot or custom
-modules. To just use a different API version of Godot, you do _not_ need LLVM though; see [Selecting a Godot version][godot-version].
+如果您计划使用 `api-custom` 功能，例如拥有一个分叉的 Godot 版本或自定义模块，则仍然需要 LLVM。
+但如果您只打算使用不同版本的 Godot API，则 _无_ 需安装 LLVM；详情请见 选择 [Godot 版本][godot-version]。
 
-LLVM binaries can be downloaded from [llvm.org][llvm]. Once installed, you can check whether LLVM's clang compiler is available:
+LLVM 的二进制文件可以从 [llvm.org][llvm] 下载。安装后，您可以检查 LLVM 的 clang 编译器是否可用：
 
 ```bash
 clang -v
