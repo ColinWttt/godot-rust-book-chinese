@@ -7,18 +7,18 @@
 
 # Hello World
 
-This page shows you how to develop your own small extension library and load it from Godot.
-The tutorial is heavily inspired by [Creating your first script][tutorial-begin] from the official Godot documentation.
-We recommended to follow that alongside this tutorial, in case you're interested how certain GDScript concepts map to Rust.
+本页面将向您展示如何开发自己的小型扩展库并从 Godot 加载它。
+本教程深受官方 Godot 文档中 [创建第一个脚本][tutorial-begin] 的启发。
+如果您对某些 GDScript 概念如何映射到 Rust 感兴趣，我们建议您跟随该教程。
 
 
 ## 目录
 <!-- toc -->
 
 
-## Directory setup
+## 目录结构设置
 
-We assume the following file structure, with separate directories for the Godot and Rust parts:
+我们假设项目使用以下的文件结构，其中 Godot 和 Rust 存放在不同的文件夹：
 
 ```txt
 📂 project_dir
@@ -39,82 +39,85 @@ We assume the following file structure, with separate directories for the Godot 
 ```
 
 
-## Create a Godot project
+## 创建 Godot 项目
 
-To use godot-rust, you need Godot version of 4.1 or later. Feel free to download the latest stable one. You can download in-development versions,
-but we [do not provide official support for those][compatibility], so we recommend stable ones.
+要使用 godot-rust，您需要安装 4.1 或更高版本的 Godot。您可以随时下载最新稳定版。您也可以下载开发中的版本，
+但我们对开发中的版本 [不提供官方支持][compatibility]，因此推荐使用稳定版。
 
-Open the Godot project manager and create a new Godot 4 project in the `godot/` subfolder. Add a `Sprite2D` to the center of a new scene.
-We recommend that you follow the [Official tutorial][tutorial-begin] and stop at the point where it asks you to create a script.
+打开 Godot 项目管理器，在 `godot/` 子文件夹中创建一个新的 Godot 4 项目，并向新场景(scene)的中心添加一个 `Sprite2D`。
+我们建议您跟随 [官方教程][tutorial-begin]，并在它要求您创建脚本时停下。
 
-Run your scene to make sure everything is working. Save the changes and consider versioning each step of the tutorial in Git.
+运行您的场景以确保一切正常。保存更改，并考虑使用 Git 版本控制来管理本教程中的每一步。
 
 
-## Create a Rust crate
+## 创建Rust crate
 
-To make a new crate with cargo, open your terminal, navigate to your desired folder and then type:
+要使用 Cargo 创建一个新的 crate，打开终端，导航到目标文件夹，然后输入：
 
 ```bash
 cargo new "{YourCrate}" --lib
 ```
 
-where `{YourCrate}` will be used as a placeholder for a crate name of your choice. To fit with the file structure, we choose `rust` as the
-crate name. `--lib` is used to create a library (not an executable), but there is some extra configuration that the crate requires.
+其中 {YourCrate} 将作为您选择的 crate 名称的占位符。为了与文件结构保持一致，我们选择 Rust 作为 crate 名称。
+使用 --lib 创建一个库（而非可执行文件），但是这个 crate 还需要一些额外的配置。
 
-Open `Cargo.toml` and modify it as follows:
+其中 `{YourCrate}` 将作为您选择的 crate 名称的占位符。为了与文件结构保持一致，我们选择 `rust` 作为 crate 名称。使用 `--lib` 创建一个库（而非可执行文件），但是这个 crate 还需要一些额外的配置。
+
+打开`Cargo.toml`文件并按以下方式修改：
 
 ```toml
 [package]
-name = "rust_project" # Part of dynamic library name; we use {YourCrate} placeholder.
-version = "0.1.0"     # You can leave version and edition as-is for now.
+name = "rust_project" # 动态库名称的一部分; 我们使用 {YourCrate} 作为占位符
+version = "0.1.0"     # 你目前可以保持版本和版次不变
 edition = "2021"
 
 [lib]
-crate-type = ["cdylib"]  # Compile this crate to a dynamic C library.
+crate-type = ["cdylib"]  # 将此crate编译为动态C库 （dynamic C library）.
 ```
 
-The `cdylib` crate type is not very common in Rust. Instead of building an application (`bin`) or a library to be utilized by other Rust code
-(`lib`), we create a _dynamic_ library, exposing an interface in the C programming language. This dynamic library is loaded by Godot at runtime,
-through the GDExtension interface.
+`cdylib`是 Rust 中不常见的 crate 类型。与构建应用程序（`bin`）或供其他 Rust 代码使用的库（`lib`）不同，我们创建了一个 _动态_ 库，暴露 C 语言接口。
+这个动态库将在运行时通过 GDExtension 接口加载到 Godot 中。
 
-Now add gdext to your project with:
+现在，使用以下命令将 gdext 添加到您的项目中：
+
 
 ```bash
 cargo add godot
 ```
 
-To compile each iteration of the extension as you write code, you can use `cargo` as you normally do with any other Rust project:
+每次编写代码时，您可以像其他 Rust 项目一样使用 `cargo` 进行编译：
 
 ```bash
 cargo build
 ```
 
-This should output to `{YourCrate}/target/debug/` at least one variation of a compiled library depending on your setup.
+根据您的设置，这应该至少输出一个编译后的库变体到  `{YourCrate}/target/debug/`目录
 
 
 ```admonish tip
-If you want to follow bleeding-edge development (with the associated risks), you can directly link to the GitHub repo in the
-`[dependencies]` section of your Cargo.toml. For this, replace:
+如果您希望跟进最新的开发（并承担相关风险），您可以直接在 `Cargo.toml` 的 `[dependencies]` 部分链接到 GitHub 仓库。  
+为此，请将：
 ~~~toml
 godot = "0.x.y"
 ~~~
-with:
+替换为：
 ~~~toml
 godot = { git = "https://github.com/godot-rust/gdext", branch = "master" }
 ~~~
+
 ```
 
 
-## Wire up Godot with Rust
+## 将 Godot 与 Rust 连接
 
 
-### The `.gdextension` file
+### `.gdextension`  文件
 
-This file tells Godot how to load your compiled Rust extension. It contains the path to the dynamic library, as well as the
-entry point (function) to initialize it with.
+此文件告诉 Godot 如何加载您的编译后的 Rust 扩展。它包含动态库的路径以及初始化它的入口点（函数）。
 
-First, add an empty `.gdextension` file anywhere in your `godot` subfolder. In case you're familiar with Godot 3, this is the equivalent of
-`.gdnlib`. In this case, we create `res://HelloWorld.gdextension` inside the `godot` subfolder and fill it as follows:
+首先，在 `godot` 子文件夹中的任何位置添加一个空的 `.gdextension` 文件。如果您熟悉 Godot 3，它相当于 `.gdnlib`。
+在本例中，我们在 `godot` 子文件夹中创建了 `res://HelloWorld.gdextension`，并按以下方式填充：
+
 
 ```ini
 [configuration]
@@ -133,73 +136,70 @@ macos.debug.arm64 =      "res://../rust/target/debug/lib{YourCrate}.dylib"
 macos.release.arm64 =    "res://../rust/target/release/lib{YourCrate}.dylib"
 ```
 
-The `[configuration]` section should be copied as-is.
+`[configuration]`部分应照原样复制。
 
-- Key `entry_symbol` refers to the entry point function that **gdext** exposes. We choose `"gdext_rust_init"`, which is gdext's default
-  (but can be configured if needed).
-- Key `compatibility_minimum` specifies the minimum version of **Godot** required by your extension to work.
-  Opening the project with a version of Godot lower than this will prevent your extension from running.
-  - If you build a plugin to be used by others, set this as low as possible for maximum ecosystem compatibility. This might however limit
-    the features you can use.
-- Key `reloadable` specifies that the editor should reload the extension when the editor window loses and
-  regains focus. See [Godot issue #80284][gdextension-reloadable] for more details.
-  - If Godot is crashing, you may want to try turning off or removing this setting.
+- `entry_symbol`是指 gdext 暴露的入口点函数。我们选择 `"gdext_rust_init"`，这是 **gdext** 的默认值（但如果需要，可以配置）。
+- `compatibility_minimum` 指定了扩展所需的最低 **Godot** 版本。使用低于该版本的 **Godot** 打开项目将导致扩展无法运行。
+  - 如果您要构建一个供他人使用的插件，请尽量将此版本设置得尽可能低，以实现更广泛的生态系统兼容性，但这可能会限制您使用的功能。
+- `reloadable` 指定当编辑器窗口失去焦点后再恢复时，应重新加载扩展。有关更多详情，请参阅 [Godot issue #80284][gdextension-reloadable]。
+  - 如果 Godot 崩溃，您可能需要尝试关闭或移除此设置。
 
-The `[libraries]` section should be updated to match the paths of your dynamic Rust libraries.
+`[libraries]` 部分应根据您的动态 Rust 库的路径进行更新。
 
-- The keys on the left are the build targets of the **Godot** project.
-  - Consult [GDExtension docs][godot-build-targets] for more possible values.
-- The values on the right are the file paths to your dynamic library.
-  - The `res://` prefix represents the path to files **relative to your Godot directory**, regardless of where your `HelloWorld.gdextension` file is.
-    You can learn more about Godot's resource paths [here][godot-resource-paths].
-  - If you remember the file structure, the `godot` and `rust` directories are siblings, so we need to go up one level to reach `rust`.
-- You can add configurations for as many platforms as you like, if you plan to export your project to those later.
-  At the very least, you need to have your current OS in `debug` mode.
+- 左侧的键是 **Godot** 项目的构建目标平台。
+  - 请参考 [GDExtension 文档][godot-build-targets] 以了解更多可能的值。
+- 右侧的值是你的动态库的文件路径。
+  - `res://` 前缀表示文件路径是相对于 **Godot** 目录 的，无论您的 `HelloWorld.gdextension` 文件位于何处。您可以在 [Godot 资源路径][godot-resource-paths] 中了解更多。
+  - 如果您记得文件结构，`godot` 和 `rust` 文件夹是兄弟关系，因此我们需要回到上一级目录才能访问 `rust`。
+- 如果您计划将项目导出到其他平台，您可以为多个平台添加配置。
+至少，您需要为当前操作系统的 `debug` 模式配置路径。
 
 ```admonish tip
-You can also employ the use of symbolic links and git submodules and then treat those as regular folders and files. Godot reads those just fine too! 
+您还可以使用符号链接和 git 子模块，然后将它们当作普通文件夹和文件来处理。Godot 也能正常读取它们！
 ```
 
-```admonish note title="Export paths"
+```admonish note title="导出路径"
+导出项目时，您需要使用 `res://` _内部_ 的路径。  
+不支持像 `..` 这样的外部路径。
 When exporting your project, you need to use paths _inside_ `res://`.  
 Outside paths like `..` are not supported. 
 ```
 
-```admonish note title="Custom Rust targets"
-If you specify your cargo compilation target via the `--target` flag or a `.cargo/config.toml` file, the rust library will be placed in a path name
-that includes target architecture, and the `.gdextension` library paths will need to match. For example, for M1 Macs 
-(`macos.debug.arm64` and `macos.release.arm64`), the path would be `"res://../rust/target/aarch64-apple-darwin/debug/lib{YourCrate}.dylib"`.
+```admonish note title="自定义 Rust 目标"
+如果您通过 `--target` 标志或 `.cargo/config.toml` 文件指定了 Cargo 编译目标，Rust 库将被放置在包含目标架构的路径下，
+而 `.gdextension` 文件中的库路径需要匹配。例如，对于 M1 Mac（`macos.debug.arm64` 和 `macos.release.arm64`），路径应为  
+`"res://../rust/target/aarch64-apple-darwin/debug/lib{YourCrate}.dylib"`。
+
 ```
 
 
 ### `extension_list.cfg`
 
-A second file `res://.godot/extension_list.cfg` should be generated once you open the Godot editor for the first time. This file lists all
-extension registered within your project. If the file does not exist, you can also manually create it, simply containing the Godot path to
-your `.gdextension` file:
+在您第一次打开 Godot 编辑器时，会自动生成一个名为 `res://.godot/extension_list.cfg` 的文件。
+此文件列出了项目中注册的所有扩展。如果该文件不存在，您也可以手动创建它，仅包含到你的`.gdextension` 文件的 Godot 路径：
 
 ```text
 res://HelloWorld.gdextension
 ```
 
 
-## Your first Rust extension
+## 您的第一个 Rust 扩展
 
 ```admonish note title=".gdignore"
-If you do not follow the [recommended gdext project directory setup][directory-setup] of having separate `rust/` and `godot/` directories
-and instead place your rust source directly within your Godot project,
-then please consider adding a [.gdignore][gd-ignore] file at the root folder of your Rust code.
-This avoids cases where the Rust Compiler may produce a file in your rust folder with an ambiguous extension such as `.obj`,
-which the Godot Editor may inappropriately attempt to import, resulting in an error and preventing you from building your project.
+如果您没有遵循 [推荐的 gdext 项目目录结构设置][directory-setup]，将 `rust/` 和 `godot/` 目录分开，  
+而是将 Rust 源代码直接放入 Godot 项目中，那么请考虑在 Rust 代码根目录添加 [.gdignore][gd-ignore] 文件。
+这可以避免 Rust 编译器在 Rust 文件夹中生成扩展名模糊的文件（如 `.obj`），而 Godot 编辑器可能错误地尝试导入它们，从而导致错误并阻止您构建项目。
+
 ```
 
 
-### Rust entry point
+### Rust入口点
 
-As mentioned earlier, our compiled C library needs to expose an _entry point_ to Godot: a C function that can be called through
-the GDExtension. Setting this up requires quite some low-level [FFI][wikipedia-ffi] code, which gdext abstracts for you.
+如前所述，我们编译的 C 库需要暴露一个 _入口点_ 给 Godot：一个可以通过 GDExtension 调用的 C 函数。
+设置此项需要一些底层的 [FFI][wikipedia-ffi] 代码，gdext 为您抽象了这些细节。
 
-In your `lib.rs`, replace the template with the following:
+在你的 `lib.rs` 文件中，将模板替换为以下内容：
+
 
 ```rust
 use godot::prelude::*;
@@ -210,35 +210,36 @@ struct MyExtension;
 unsafe impl ExtensionLibrary for MyExtension {}
 ```
 
-There are multiple things going on here:
+这里有几个要点：
 
-1. Place the [`prelude`][api-prelude] module from the [`godot`][api-godot] crate into scope.
-   This module contains the most common symbols in the gdext API.
-2. Define a struct called `MyExtension`. This is just a type tag without data or methods, you can name it however you like.
-3. Implement the [`ExtensionLibrary`][api-extensionlibrary] trait for our type, and mark it with the `#[gdextension]` attribute.
+1. 将[`prelude`][api-prelude]模块从 [`godot`][api-godot] crate 引入作用域。
+    该模块包含了 gdext API 中最常用的符号。
+2. 定义一个名为 `MyExtension` 的结构体。它只是一个类型标记，没有数据或方法，您可以根据需要命名它。
+3. 为该类型实现 [`ExtensionLibrary`][api-extensionlibrary] trait，并用 `#[gdextension]` 属性标记。
 
-The last point declares the actual GDExtension entry point, and the proc-macro attribute takes care of the low-level details.
+最后这一点声明了实际的 GDExtension 入口点，proc-macro 属性会处理底层的细节。
 
 
-### Troubleshooting
+### 故障排除
 
-It's common that there are some issues with first-time setup.  Particularly, errors related to the library not being found or the `gdext_rust_init`
-entry point symbol being missing or impossible to resolve come up, usually due to an incorrect initial setup.  Here are a few troubleshooting steps
-that should solve the most common problems.
 
-- Have you run `cargo build`?
-- In `Cargo.toml`, have you set `crate-type = ["cdylib"]`?
-- In `my-extension.gdextension`, have you set `entry_symbol = "gdext_rust_init"`?  No other symbol can work.
-- Are the paths set in `my-extension.gdextension` correct?
-  - Are you sure?  Double check `/rust/target/debug/` to see if the name of the `.so`/`.dll`/`.dylib` is spelled the way you expect.
-  - The paths must also be relative to the directory that `project.godot` is in.  Typically it'll be `res://../rust/...`.
-- Have you written the Rust code necessary to generate the entry point symbol?
-  - See [above](#rust-entry-point) for how.
-- Are your gdext and Godot versions compatible? See [this page][versioning] for how to select the correct versions.
-- In case you use `api-custom`, do you have
-  - Godot in your `PATH` as `godot4`,
-  - or an environment variable called `GODOT4_BIN`, containing the path to the Godot executable?
-- Is your directory structure like this below?  It's much easier when you ask for help if it is.
+首次设置时常会遇到一些问题。特别是与库无法找到或 `gdext_rust_init` 入口点符号缺失或无法解析相关的错误，通常是由于初始设置不正确。
+以下是一些故障排除步骤，应该能解决大部分常见问题。
+
+
+- 您是否运行了 `cargo build`?
+- 在 `Cargo.toml`, ，是否设置了 `crate-type = ["cdylib"]`?
+- 在  `my-extension.gdextension`中，是否设置了 `entry_symbol = "gdext_rust_init"`? 没有其他符号可以正常运行。
+- `my-extension.gdextension`  中的路径设置是否正确？
+  - 您确定吗？请仔细检查 `/rust/target/debug/`目录，确保`.so`/`.dll`/`.dylib` 文件的名称是否拼写正确。
+  - 路径也必须相对于  `project.godot` 所在的目录。通常情况下，应该是`res://../rust/...`。
+- 您是否编写了生成入口点符号所需的 Rust 代码？
+  - 请参阅上面的Rust入口点 部分了解如何操作
+- 您的 gdext 和 Godot 版本是否兼容？请查看 [此页面][versioning] 以了解如何选择正确的版本。
+- 如果您使用 `api-custom`，请确认您是否：
+- 将 Godot 设置在您的 `PATH` 中为 `godot4`,
+- 或者设置了名为 `GODOT4_BIN`，包含 Godot 可执行文件的路径？
+- 您的目录结构是否如下所示？如果是这样，寻求帮助时会更容易。
 
 ```txt
 my-cool-project
@@ -254,19 +255,19 @@ my-cool-project
 ```
 
 
-## Creating a Rust class
+## 创建一个 Rust 类
 
-Now, let's write Rust code to define a _class_ that can be used in Godot.
+现在，让我们编写 Rust 代码来定义一个可以在 Godot 中使用的  _类_。
 
-Every class inherits an existing Godot-provided class (its _base class_ or just _base_).
-Rust does not natively support inheritance, but the gdext API emulates it to a certain extent.
+每个类都继承一个现有的 Godot 提供的类（它的 _基类_ 或简称 _base_）。
+Rust 本身不支持继承，但 gdext API 在某种程度上模拟了它。
 
 
-### Class declaration
+### 类的声明
 
-In this example, we declare a class called `Player`, which inherits `Sprite2D` (a node type).
-This can be either defined in `lib.rs` or in a separate file `player.rs`.
-In case you go for the latter, don't forget to declare `mod player;` in your `lib.rs` file.
+在本例中，我们声明一个名为 `Player` 的类，它继承自 `Sprite2D`（一个node类型）。
+这可以在 `lib.rs` 中定义，也可以在单独的 `player.rs` 文件中定义。
+如果选择后者，请不要忘记在 `lib.rs` 文件中声明 `mod player`;。
 
 ```rust
 use godot::prelude::*;
@@ -282,42 +283,34 @@ struct Player {
 }
 ```
 
-Let's break this down.
+我们来逐步解释。
 
-1. The `godot` prelude contains the most common symbols. Less frequent classes are located in the [`engine`][api-class-engine] module.
+1. `godot`prelude包含了最常用的符号。较少使用的类位于 [engine][api-class-engine] 模块中。
+2. `#[derive]` 属性将 `Player` 注册为 Godot 引擎中的类。
+详细信息请参考 [API 文档][api-derive-godotclass] 中关于 `#[derive(GodotClass)]` 的说明。
+3. 可选的 `#[class]`  属性配置类的注册方式。在本例中，我们指定 `Player` 继承 Godot 的 `Sprite2D` 类。
+如果不指定 `base` 键，则基类将隐式为 `RefCounted`，就像在 GDScript 中省略 `extends`关键字一样。
+4. 我们为逻辑定义了两个字段 `speed` 和 `angular_speed`。这些是普通的 Rust 字段，没有特别的地方。稍后会介绍它们的用途。
+5. `Base<T>` 类型用于 `base` 字段，它允许通过组合访问基类实例（因为 Rust 不支持继承）。这使得可以通过扩展 trait 访问两个方法 `self.base()` 和 `self.base_mut()`
+   - `T` 必须与声明的基类匹配。例如， `#[class(base=Sprite2D)]` 与 `Base<Sprite2D>`.
+   - 名称可以自由选择，但 `base` 是常见的习惯。
+   - 你 _可以不_ 声明此字段。如果缺少此字段，则无法在 `self` 内部访问基类对象。
+      例如，继承自 `RefCounted` 的数据包通常不需要此字段。
 
-2. The `#[derive]` attribute registers `Player` as a class in the Godot engine.
-   See [API docs][api-derive-godotclass] for details about `#[derive(GodotClass)]`.
+```admonish warning title="正确的 node 类型"
+将 `Player` 类实例添加到场景时，请确保选择节点类型为 `Player` **而不是它的基类 `Sprite2D`**。  
+否则，您的 Rust 逻辑将无法运行。稍后当您准备好进行测试时，我们将指导您进行更改你的场景。
 
-3. The optional `#[class]` attribute configures how the class is registered. In this case, we specify that `Player` inherits Godot's
-   `Sprite2D` class. If you don't specify the `base` key, the base class will implicitly be `RefCounted`, just as if you omitted the
-   `extends` keyword in GDScript.
-
-4. We define two fields `speed` and `angular_speed` for the logic. These are regular Rust fields, no magic involved. More about their use later.
-
-5. The `Base<T>` type is used for the `base` field, which allows `self` to access the base instance (via composition, as Rust does not have
-   native inheritance). This enables two methods that can be accessed as `self.base()` and `self.base_mut()` on your type (through an extension
-   trait).
-
-   - `T` must match the declared base class. For example, `#[class(base=Sprite2D)]` implies `Base<Sprite2D>`.
-   - The name can be freely chosen, but `base` is a common convention.
-   - You do not _have to_ declare this field. If it is absent, you cannot access the base object from within `self`.
-     This is often not a problem, e.g. in data bundles inheriting `RefCounted`.
-
-```admonish warning title="Correct node type"
-When adding an instance of your `Player` class to the scene, make sure to select node type `Player` **and not its base `Sprite2D`**.
-Otherwise, your Rust logic will not run.
-We will guide you to make that change to your scene later, when you're ready to test it.
-
-If Godot fails to load a Rust class (e.g. due to an error in your extension), it may silently replace it with its base class.
-Use version control (git) to check for unwanted changes in `.tscn` files.
+如果 Godot 无法加载 Rust 类（例如，由于扩展中的错误），它可能会默默地将其替换为基类。
+使用版本控制（git）检查 .tscn 文件中是否有你不想要的更改发生。
 ```
 
 
-### Method declaration
+### 方法声明
 
-Now let's add some logic. We start with overriding the `init` method, also known as the constructor.
-This corresponds to GDScript's `_init()` function.
+现在，让我们添加一些逻辑。我们首先重写 `init` 方法，也就是构造函数。
+这对应于 GDScript 的 `_init()` 函数。
+
 
 ```rust
 use godot::classes::ISprite2D;
@@ -325,7 +318,7 @@ use godot::classes::ISprite2D;
 #[godot_api]
 impl ISprite2D for Player {
     fn init(base: Base<Sprite2D>) -> Self {
-        godot_print!("Hello, world!"); // Prints to the Godot console
+        godot_print!("Hello, world!"); // 输出到 Godot 控制台
         
         Self {
             speed: 400.0,
@@ -336,69 +329,66 @@ impl ISprite2D for Player {
 }
 ```
 
-Again, those are multiple pieces working together, let's go through them one by one.
+同样，我们逐一说明这里协同工作的部分：
 
-1. `#[godot_api]` - this lets gdext know that the following `impl` block is part of the Rust API to expose to Godot.
-   This attribute is required here; accidentally forgetting it will cause a compile error.
+1. `#[godot_api]` - 这告知 gdext 接下来的`impl`块是 Rust API，供 Godot 使用。
+    这里是必需的；忘记添加会导致编译错误。
+2. `impl ISprite2D` - 每个引擎类都有一个 `I{ClassName}` trait，包含该类的虚函数以及一般用途的功能，例如 `init`（构造函数）或 `to_string`（字符串转换）。
+    此 trait 没有必需的方法。
+3. `init` 构造函数是一个关联函数（其他语言中的“静态方法”），它以基类实例为参数并返回构造好的`Self`实例。
+通常，基类实例只是传递给构造函数，构造函数是初始化其他字段的地方。在此示例中，我们为 `speed` 和 `angular_speed` 字段赋予初始值 `400.0` 和 `PI`。
 
-2. `impl ISprite2D` - each of the engine classes has a `I{ClassName}` trait, which comes with virtual functions for that
-   specific class, as well as general-purpose functionality such as `init` (the constructor) or `to_string` (String conversion).
-   The trait has no required methods.
-
-3. The `init` constructor is an associated function ("static method" in other languages) that takes the base instance as argument and returns
-   a constructed instance of `Self`. While the base is usually just forwarded, the constructor is the place to initialize all your other fields.
-   In this example, we assign initial values `400.0` and `PI`.
-
-Now that initialization is sorted out, we can move on to actual logic. We would like to continuously rotate the sprite, and thus override
-the `process()` method. This corresponds to GDScript's `_process()`. If you need a fixed framerate, use `physics_process()` instead.
+现在初始化完成后，我们可以继续添加实际的逻辑。我们希望持续旋转sprite，因此重写 `process()` 方法。
+这对应于 GDScript 的 `_process()`。如果您需要固定的帧率，请使用 `physics_process()`。
 
 ```rust
 use godot::classes::ISprite2D;
 
 #[godot_api]
 impl ISprite2D for Player {
-    fn init(base: Base<Sprite2D>) -> Self { /* as before */ }
+    fn init(base: Base<Sprite2D>) -> Self { /* 如前所述 */ }
 
     fn physics_process(&mut self, delta: f64) {
-        // In GDScript, this would be: 
+        // 在 GDScript中，这将是： 
         // rotation += angular_speed * delta
         
         let radians = (self.angular_speed * delta) as f32;
         self.base_mut().rotate(radians);
-        // The 'rotate' method requires a f32, 
-        // therefore we convert 'self.angular_speed * delta' which is a f64 to a f32
+        // 'rotate' 方法需要一个 f32， 
+        // 因此我们将 'self.angular_speed * delta' 的f64 转换为 f32
     }
 }
 ```
 
-GDScript uses property syntax here; Rust requires explicit method calls instead. Also, access to base class methods -- such as `rotate()`
-in this example -- is done via `base()` and `base_mut()` methods.
+GDScript 使用属性语法；而 Rust 需要显式的方法调用。另外，访问基类方法 —— 例如本例中的 `rotate()`，
+需要通过 `base()` 和 `base_mut()` 方法来实现。
 
 ```admonish warning title="Direct field access"
-Do not use the `self.base` field directly. Use `self.base()` or `self.base_mut()` instead, otherwise you won't be able to access and call
-the base class methods.
+不要直接使用 `self.base` 字段。应使用 `self.base()` 或 `self.base_mut()`，否则您将无法访问并调用基类方法。
 ```
 
-This is a point where you can see the result. Compile your code and launch the Godot editor.
-Right-click on your `Sprite2D` in the scene tree, and choose "Change Type..."
-Find and choose the `Player` node type, which will be a child of `Sprite2D` in the Change Type dialog that appears.
+在这一点上，您应该可以看到结果。编译代码并启动 Godot 编辑器。
+右键单击场景树中的 `Sprite2D`，选择 “更改类型”
+在弹出的 “更改类型” 对话框中找到并选择 `Player` 节点类型，它将作为 `Sprite2D` 的子节点出现。
 
-Now, save your changes, and run the scene. The sprite should rotate at a constant speed.
+现在保存更改，并运行场景。sprite应当以恒定的速度旋转。
 
 ![rotating sprite][img-sprite-rotating]
 
 ```admonish tip
-**Launching the Godot application**
+**启动 Godot 应用程序**
 
-Unfortunately there is [a GDExtension limitation][issue-no-reload] that prevents recompilation while the editor is open 
-before Godot 4.2. Since Godot 4.2, it is possible to hot-reload extensions. This means you can recompile your Rust code
-and Godot will pick up changes, without needing to restart the editor.
 
-However, if you don't need to modify anything in the editor itself, you can launch Godot from the command-line or even your IDE.
-Check out the [command-line tutorial][godot-command-line] for more information.
+不幸的是，在 Godot 4.2 之前，存在 [GDExtension 限制][issue-no-reload]，该限制阻止在编辑器打开时重新编译。  
+自 Godot 4.2 起，已支持热重载扩展。这意味着您可以重新编译 Rust 代码，  
+Godot 会自动更新变更，而无需重新启动编辑器。
+
+但是，如果您不需要修改编辑器本身，您可以从命令行或您的 IDE 启动 Godot。  
+请查看 [命令行教程][godot-command-line] 了解更多信息。
+
 ```
 
-We now add a translation component to the sprite, following [the upstream tutorial][tutorial-full-script].
+我们现在将为sprite添加一个translation组件，参照 [Godot教程][tutorial-full-script]。
 
 ```rust
 use godot::classes::ISprite2D;
@@ -408,7 +398,7 @@ impl ISprite2D for Player {
     fn init(base: Base<Sprite2D>) -> Self { /* as before */ }
 
     fn physics_process(&mut self, delta: f64) {
-        // GDScript code:
+        // GDScript 代码：
         //
         // rotation += angular_speed * delta
         // var velocity = Vector2.UP.rotated(rotation) * speed
@@ -421,7 +411,7 @@ impl ISprite2D for Player {
         let velocity = Vector2::UP.rotated(rotation) * self.speed as f32;
         self.base_mut().translate(velocity * delta as f32);
         
-        // or verbose: 
+        // 或更详细的写法： 
         // let this = self.base_mut();
         // this.set_position(
         //     this.position() + velocity * delta as f32
@@ -430,17 +420,17 @@ impl ISprite2D for Player {
 }
 ```
 
-The result should be a sprite that rotates with an offset.
+结果应该是一个带有偏移的旋转sprite。
 
 ![rotating translated sprite][img-sprite-moving]
 
 
-### Custom Rust APIs
+### 自定义Rust APIs
 
-Say you want to add some functionality to your `Player` class, which can be called from GDScript. For this, you have a separate `impl` block, again
-annotated with `#[godot_api]`. However, this time we are using an _inherent_ `impl` (i.e. without a trait name).
+假设您想为 `Player` 类添加一些可以从 GDScript 调用的功能。为此，您需要一个单独的 `impl` 块，同样标注 `#[godot_api]`。
+然而，这次我们使用的是 _固有的_ impl（即没有 trait 名称）。
 
-Concretely, we add a function to increase the speed, and a signal to notify other objects of the speed change.
+具体来说，我们添加一个函数来增加速度，并添加一个信号,当速度发生变化时通知其他对象。
 
 ```rust
 #[godot_api]
@@ -456,15 +446,16 @@ impl Player {
 }
 ```
 
-`#[godot_api]` takes again the role of exposing the API to the Godot engine. But there are also two new attributes:
+`#[godot_api]`再次起到将 API 暴露给 Godot 引擎的作用。但这里有两个新属性：
 
-- `#[func]` exposes a function to Godot. The parameters and return types are mapped to their corresponding GDScript types.
-- `#[signal]` declares a signal. A signal can be emitted with the `emit_signal` method (which every Godot class provides, since it is inherited
-  from `Object`).
+- `#[func]` 将函数暴露给 Godot。参数和返回类型会映射到对应的 GDScript 类型。
 
-API attributes typically follow the GDScript keyword names: `class`, `func`, `signal`, `export`, `var`, ...
+- `#[signal]` 声明一个信号。信号可以通过 `emit_signal` 方法触发（每个 Godot 类都提供了这个方法，因为它继承自 `Object`）。
 
-That's it for the _Hello World_ tutorial! The following chapters will go into more detail about the various features that gdext provides.
+
+API 属性通常遵循 GDScript 关键字的命名：`class`, `func`, `signal`, `export`, `var`等。
+
+这就是 _Hello World_ 教程的全部内容！接下来的章节将更详细地介绍 gdext 提供的各种功能。
 
 
 [api-class-engine]: https://godot-rust.github.io/docs/gdext/master/godot/classes/index.html
