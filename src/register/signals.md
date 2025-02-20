@@ -5,16 +5,15 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Registering signals
+# 注册信号
 
-Signals currently have very limited support in gdext, through the `#[signal]` attribute. Consult its [API documentation][api-signal] for details.
+目前，gdext对信号的支持非常有限，通过 `#[signal]` 属性实现。有关详细信息，请查阅其[API文档][api-signal]。
 
-Signal registration will be completely reworked in the future, with breaking API changes.
+信号的注册将在未来完全重构，并且会有破坏性的API变更。
 
-As an alternative, you can use Godot's dynamic API to register signals. The [`Object` class][api-object] has methods `connect()` and
-`emit_signal()` that can be used to connect and emit signals, respectively.
+作为替代方法，你可以使用Godot的动态API来注册信号。[`Object类`][api-object]具有`connect()`和`emit_signal()`方法，分别可以用来连接和发射信号。
 
-See also [GDScript reference for signals][godot-gdscript-signals].
+请看[GDScript中信号的参考][godot-gdscript-signals]。
 
 
 [api-object]: https://godot-rust.github.io/docs/gdext/master/godot/classes/struct.Object.html

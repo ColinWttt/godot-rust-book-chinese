@@ -7,12 +7,9 @@
 
 # 构造函数（Constructors）
 
-While Rust does not have constructors as a language feature (like C++ or C#), associated functions that return a new object are commonly
-called "constructors". We extend the term to include slightly deviating signatures, but conceptually _constructors_ are always
-used to construct new objects.
+虽然Rust没有像C++或C#那样的构造函数作为语言特性，但返回新对象的关联函数通常被称为“构造函数”。我们扩展了这个术语，涵盖了一些稍有变化的签名，但从概念上讲，_构造函数_ 始终用于构造新对象。
 
-Godot has a special constructor, which we call the _Godot default constructor_ or simply `init`. This is comparable to the `_init` method in
-GDScript.
+Godot有一个特殊的构造函数，我们称之为 _Godot默认构造函数_，或者简称为`init`。这与GDScript中的`_init`方法类似。
 
 
 ## 目录
