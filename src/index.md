@@ -5,86 +5,72 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Introduction
+# 简介
 
-Welcome to the **godot-rust book**! This is a work-in-progress user guide for **gdext**, the Rust binding for Godot 4.
+欢迎使用**godot-rust**文档！这是一本关于**gdext**（Godot 4的Rust绑定）的用户指南。
 
-If you're new to Rust, before getting started, it is highly recommended that you familiarize yourself with concepts outlined in the officially
-maintained [Rust Book](https://doc.rust-lang.org/book/).
+如果你是Rust的新手，强烈建议在开始之前先了解一下[Rust的官方文档](https://doc.rust-lang.org/book/)。
 
-To read the book about gdnative (Godot 3 binding), follow [this link](../gdnative-book).
-
-
-## The purpose of godot-rust
-
-Godot is a batteries-included game engine that fosters a productive and fun gamedev workflow. It ships GDScript as a built-in scripting
-language and also provides official support for C++ and C# bindings. Its GDExtension mechanism allows more languages to be integrated,
-in our case Rust.
-
-Rust brings a modern, robust and performant experience to game development. If you are interested in scalability, strong type systems or
-just enjoy Rust as a language, you may consider using it with Godot, to combine the best of both worlds.
+如果你想阅读关于gdnative（Godot 3绑定）的文档，请访问这个[链接](https://godot-rust.github.io/gdnative-book/)。
 
 
-## About this project
+## godot-rust的目的
 
-godot-rust is a [community-developed][github-contributors] open source project. It is maintained independently of Godot itself, but we are in
-close contact with engine developers, to foster a steady exchange of ideas. This has allowed us to address a lot of Rust's needs upstream, but
-also led to improvements of the engine itself in several cases.
+Godot是一款包含多种功能的游戏引擎，能够促进高效且有趣的游戏开发工作流程。它内置了`GDScript`作为脚本语言，并且官方也支持`C++`和`C#`绑定。其`GDExtension`机制允许更多语言集成，Rust就是其中之一。
 
-
-### Currently supported features
-
-For an up-to-date overview of implementation status, consult [issue #24][features].
+Rust为游戏开发带来了现代化、健壮且高效的体验。如果你对可扩展性、强类型系统感兴趣，或者只是喜欢Rust这门语言，你可以考虑将其与Godot结合使用，享受两者的最佳特性。
 
 
-### Terminology
+## 关于本项目
 
-To avoid confusion, here is an explanation of names and technologies you may encounter over the course of this book:
-
-- [**godot-rust**][ref-godot-rust]: The entire project, encompassing Rust bindings for Godot 3 and 4,
-  as well as related efforts (book, community, etc.).
-- [**GDExtension**][ref-godot-gdext]: C API provided by Godot 4.
-- [**GDNative**][ref-godot-gdnative]: C API provided by Godot 3.
-- [**gdext**][github-gdext] (lowercase): the Rust binding for GDExtension (Godot 4) -- what this book focuses on.
-- [**gdnative**][github-gdnative] (lowercase): the Rust binding for GDNative (Godot 3).
-- **Extension**: An extension is a dynamic C library, developed by any language binding (Rust, C++, Swift, ...). It uses the GDExtension API and can
-  be loaded by Godot 4.
+godot-rust是一个由[社区开发][github-contributors]的开源项目。它独立于Godot本身进行维护，但我们与引擎开发人员保持密切联系，促进思想的持续交流。这使我们能够在上游解决许多Rust的需求，同时也在多个方面改善了引擎本身。
 
 
-### GDExtension API: what's new
+### 当前支持的功能
 
-This section briefly mentions the difference between the native interfaces in Godot 3 and 4 from a functional perspective.
+有关实现状态的最新概况，请参考[issue #24][features]。
 
-While the underlying FFI (foreign function interface) layer has been completely rewritten, a lot of concepts remain the same from a user point of
-view. In particular, Godot's approach with a node-based scene graph, composed of classes in an inheritance relation, has not changed.
 
-That said, there are some notable differences:
+### 术语
 
-1. **Native scripts ⇾ extension classes**
+为了避免混淆，以下是你在本书中可能遇到的一些名称和技术的解释：
 
-   With GDNative, Rust classes could be registered as _native scripts_. These scripts are attached to nodes in order to enhance
-   their functionality, analogous to how GDScript scripts could be attached. GDExtension on the other hand directly supports Rust types
-   as engine classes, see also next point.
+- [**godot-rust**][ref-godot-rust]: 包含Godot 3和4的Rust绑定以及相关工作的整个项目（书籍、社区等）。
+- [**GDExtension**][ref-godot-gdext]: Godot 4提供的C API。
+- [**GDNative**][ref-godot-gdnative]:  Godot 3提供的C API。
+- [**gdext**][github-gdext] (小写): GDExtension（Godot 4）的Rust绑定——本书的重点。
+- [**gdnative**][github-gdnative] (小写): ：GDNative（Godot 3）的Rust绑定。
+- **Extension**: 扩展是一个动态的C库，由任何语言绑定（Rust、C++、Swift等）开发。它使用`GDExtension` API，并可以被Godot 4加载。
 
-   When porting GDScript code to Rust, keep in mind that the first-class way to use Rust code is via classes, not scripts. Thanks to
-   great contributions, we _do_ in the meantime support [Rust scripts][api-obj-script], albeit less developed than classes.
 
-2. **First-class citizen types**
+### GDExtension API：新特性
 
-   In Godot 3, user-defined native classes had lots of limitations in the editor: type annotations were not fully supported, they could
-   not easily be used as custom resources, etc. With GDExtension, user-defined classes in Rust behave much closer to GDScript classes.
-   They also no longer need a separate `.gdns` file to be registered.
+本节简要介绍从功能角度看，Godot 3和4的原生接口之间的差异。
 
-3. **Always-on**
+尽管底层的FFI（外部函数接口）层已经完全重写，但从用户的角度来看，许多概念保持不变。特别是，Godot采用基于节点的场景图（scene graph）方法，由具有继承关系的类组成，这一点没有变化。
 
-   GDNative had the differentiation between "tool" and "normal" scripts. In GDExtension, native logic by default runs as soon as the Godot editor
-   launches, but godot-rust explicitly changes this behavior. In Rust, all virtual callbacks (`ready`, `process` etc.) are not invoked
-   **in editor mode**. This behavior can be configured with `#[class(tool)]` and the [`ExtensionLibrary`][extension-library-doc] trait.
+不过，确实有一些显著的差异：
 
-4. **No recompilation while editor is open**
 
-   Prior to Godot 4.2, it was not possible to recompile a Rust library and let changes take effect when the game is launched from the editor.
-   Editor reloading has since been implemented though, see [issue #66231].
+1. **原生脚本 ⇾ 扩展类**
+
+   在GDNative中，Rust类可以作为 _原生脚本_ 注册。这些脚本可以附加到节点上，以增强其功能，类似于GDScript脚本的附加方式。而GDExtension则直接支持将Rust类型作为引擎类，参见下一点。
+
+在将GDScript代码迁移到Rust时，请记住，使用Rust代码的首选方式是通过类，而不是脚本。得益于出色的贡献，我们目前 _确实_ 支持[Rust脚本][api-obj-script]，尽管它们的开发程度不如类。
+
+
+1. **头等对象（First-class citizen）类型**
+
+   在Godot 3中，用户定义的原生类在编辑器中有很多限制：类型注解不完全支持，它们不能轻松用作自定义`resources`等。而通过GDExtension，Rust中用户定义的类，行为上更接近GDScript类。它们也不再需要单独的`.gdns`文件来注册。
+
+2. **始终开启(Always-on)**
+
+   GDNative区分了“工具”脚本和“普通”脚本。在GDExtension中，原生逻辑默认在Godot编辑器启动时就运行，但godot-rust明确改变了这种行为。
+   在Rust中，所有虚拟回调（`ready`、`proces`s等）默认在编辑器模式下不会调用。可以通过`#[class(tool)]`和[`ExtensionLibrary`][extension-library-doc]trait来配置此行为。
+
+3. **编辑器打开时无需重新编译**
+
+   在Godot 4.2之前，在编辑器启动后，无法重新编译Rust库并让更改生效。编辑器重新加载功能已实现，详情请见 [issue #66231]。
 
 
 [features]: https://github.com/godot-rust/gdextension/issues/24
