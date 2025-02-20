@@ -102,7 +102,7 @@ struct Monster {
 
 ---
 
-[^inference]: You can tweak the type detection using the `#[hint]` attribute, see [the corresponding docs][api-derive-godotclass-inference].
+[^inference]: 您可以使用 `#[hint]` 属性调整类型检测，详见[相关文档][api-derive-godotclass-inference]。
 
 
 [api-derive-godotclass]: https://godot-rust.github.io/docs/gdext/master/godot/register/derive.GodotClass.html
