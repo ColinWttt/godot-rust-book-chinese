@@ -5,31 +5,29 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Recipes
+# 实用案例
 
 
-## Custom resources
+## 自定义 resources
 
-With godot-rust, you are able to define custom `Resource` classes which are then available to the end user.
-
-
-## Editor plugins
-
-`EditorPlugin` types are loaded during editor and runtime and are able to access the editor as well as the scene tree. This type follows the same
-functionality that a typical `EditorPlugin` class written in GDScript would, but crucially with access to the _entire Rust ecosystem_.
+使用 godot-rust，您可以定义自定义的 `Resource` 类，这些类随后可以供终端用户使用。
 
 
-## Engine singletons
+## 编辑器插件
 
-An Engine Singleton is a class instance that is always globally available (following the Singleton pattern). However,
-it cannot access the `SceneTree` through any reliable means.
-
-
-## `ResourceFormatSaver` and `ResourceFormatLoader`
-
-Provide custom logic for saving and loading your `Resource` derived classes.
+`EditorPlugin` 类型在编辑器和运行时加载，并能够访问编辑器和场景树。该类型的功能与用 GDScript 编写的典型 `EditorPlugin` 类相同，但关键在于它可以访问 _整个 Rust 生态系统_。
 
 
-## Custom icons
+## 引擎单例
 
-Adding custom icons to your classes is actually fairly simple!
+引擎单例是一个始终全局可用的类实例（遵循单例模式）。然而，它无法通过任何可靠的方式访问 `SceneTree`。
+
+
+## `ResourceFormatSaver` 和 `ResourceFormatLoader`
+
+提供自定义的逻辑来保存和加载您的 `Resource` 派生类。
+
+
+## 自定义图标
+
+为您的类添加自定义图标实际上是非常简单的！

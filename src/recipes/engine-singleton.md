@@ -5,28 +5,28 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Engine singletons
+# 引擎单例
 
-It is important for you to understand the [Singleton pattern][singleton] to
-properly utilize this system.
+理解 [单例模式][singleton]  对于正确使用此系统非常重要。
 
-```admonish info title="Controversy"
-The "Singleton pattern" is often referred to as an anti-pattern, because it violates several good practices for clean, modular code. However, it is
-also a tool that can be used to solve certain design problems. As such, it is used internally by Godot, and is available to godot-rust
-users as well.
 
-Read more about criticisms [here][singleton-crit].
+```admonish info title="争议"
+“单例模式”通常被视为一种反模式，因为它违反了多种整洁、模块化代码的良好实践。然而，它也是一个可以用来解决某些设计问题的工具。因此，Godot 内部使用了单例模式，并且 godot-rust 用户也可以使用。
+
+关于批评的更多内容，请参考 [这里][singleton-crit]。
+
 ```
 
-An engine singleton is registered through [`godot::classes::Engine`][api-class-engine].
+引擎单例通过[`godot::classes::Engine`][api-class-engine]注册。
 
-Custom engine singletons in Godot:
+Godot 中的自定义引擎单例：
 
-- are `Object` types
-- are always accessible to GDScript and GDExtension languages
-- must be manually registered and unregistered in the `InitLevel::Scene` step
+- 是 `Object` 类型
+- 始终可以在 GDScript 和 GDExtension 中访问
+- 必须在 `InitLevel::Scene` 阶段手动注册和注销
 
-Godot provides _many_ built-in singletons in its API. You can find a full list [here][godot-singleton-list].
+Godot 在其 API 中提供了 _许多_ 内置单例。您可以在 [这里][godot-singleton-list] 找到完整列表。
+
 
 [api-class-engine]: https://godot-rust.github.io/docs/gdext/master/godot/classes/struct.Engine.html
 [godot-singleton-list]: https://docs.godotengine.org/en/stable/classes/class_@globalscope.html#properties
@@ -39,9 +39,9 @@ Godot provides _many_ built-in singletons in its API. You can find a full list [
 <!-- toc -->
 
 
-## Defining a singleton
+## 定义单例
 
-Defining a singleton is the same as registering a custom class.
+定义单例与注册自定义类相同。
 
 ```rust
 #[derive(GodotClass)]
@@ -58,11 +58,12 @@ impl MyEditorSingleton {
 ```
 
 
-## Registering a singleton
+## 注册单例
 
-Registering singletons is done during the `InitLevel::Scene` stage of initialization.
+单例注册是在初始化的 `InitLevel::Scene` 阶段完成的。
 
-To achieve this, we can customize our init/shutdown routines by overriding `ExtensionLibrary` trait methods.
+为此，我们可以通过复写 `ExtensionLibrary` trait 方法来自定义初始化/关闭例程。
+
 
 ```rust
 struct MyExtension;
@@ -71,8 +72,7 @@ struct MyExtension;
 unsafe impl ExtensionLibrary for MyExtension {
     fn on_level_init(level: InitLevel) {
         if level == InitLevel::Scene {
-            // The `&str` identifies your singleton and can be
-            // used later to access it.
+            // `&str` 用于标识您的单例，稍后可以用它来访问单例。
             Engine::singleton().register_singleton(
                 "MyEngineSingleton",
                 &MyEngineSingleton::new_alloc(),
@@ -82,21 +82,19 @@ unsafe impl ExtensionLibrary for MyExtension {
 
     fn on_level_deinit(level: InitLevel) {
         if level == InitLevel::Scene {
-            // Let's keep a variable of our Engine singleton instance,
-            // and MyEngineSingleton name.
+            // 保留我们的引擎单例实例 和 MyEngineSingleton名称 变量。
             let mut engine = Engine::singleton();
             let singleton_name = "MyEngineSingleton";
 
-            // Here, we manually retrieve our singleton(s) that we've registered,
-            // so we can unregister them and free them from memory - unregistering
-            // singletons isn't handled automatically by the library.
+
+            // 这里，我们手动检索已注册的单例，
+            // 以便注销它们并释放内存 —— 注销单例不会自动由库处理。
             if let Some(my_singleton) = engine.get_singleton(singleton_name) {
-                // Unregistering from Godot, and freeing from memory is required
-                // to avoid memory leaks, warnings, and hot reloading problems.
+                // 注销 Godot 中的单例并释放内存，以避免内存泄漏、警告和热重载问题。
                 engine.unregister_singleton(singleton_name);
                 my_singleton.free();
             } else {
-                // You can either recover, or panic from here.
+                // 在这里，您可以选择恢复或触发 panic。
                 godot_error!("Failed to get singleton");
             }
         }
@@ -104,18 +102,17 @@ unsafe impl ExtensionLibrary for MyExtension {
 }
 ```
 
-```admonish warning title="Singletons inheriting from *RefCounted*"
-Use a manually-managed class as a base (often `Object` will be enough) for custom singletons to avoid prematurely freeing the object.
-If for any reason you need to have an instance of a reference-counted object registered as a singleton, this
-[issue thread][refcounted-singleton-issue] presents some possible workarounds.
+```admonish warning title="继承自*RefCounted*的单例"
+使用手动管理的类作为自定义单例的基类（通常 `Object` 就足够了），可以避免过早地释放对象。
+如果由于某些原因需要将引用计数对象的实例注册为单例，您可以参考这个 [issue thread][refcounted-singleton-issue]，它提供了一些可能的解决方法。
 ```
 
 [refcounted-singleton-issue]: https://github.com/godot-rust/gdext/issues/522
 
 
-## Calling from GDScript
+## 从 GDScript 调用
 
-Now that your singleton is available (and once you've recompiled and reloaded), you should be able to access it from GDScript like so:
+现在您的单例已可用（并且在重新编译和重新加载后），您应该能够从 GDScript 中像这样访问它：
 
 ```php
 extends Node
@@ -125,23 +122,24 @@ func _ready() -> void:
 ```
 
 
-## Calling from Rust
+## 从 Rust 调用
 
-You may also want to access your singleton from Rust as well.
+您可能也希望从 Rust 中访问您的单例。
 
 ```rust
 godot::classes::Engine::singleton()
     .get_singleton(StringName::from("MyEditorSingleton"));
 ```
 
-For more information on this method, refer to [the API docs][method-get-singleton].
+有关此方法的更多信息，请参阅 [API 文档][method-get-singleton]。
 
 [method-get-singleton]: https://godot-rust.github.io/docs/gdext/master/godot/classes/struct.Engine.html#method.get_singleton
 
 
-## Singletons and the `SceneTree`
+## 单例和 `SceneTree`
 
-Singletons cannot safely access the scene tree. At any given moment, they may exist without a scene tree being active.
-While it is technically possible to access the tree through hacky methods, it is **highly recommended** to use a
-custom `EditorPlugin` for this purpose. Creating an `EditorPlugin` allows for registering an "autoload singleton" which is a `Node` (or
- derived) type and is automatically loaded into the `SceneTree` by Godot when the game starts.
+
+单例不能安全地访问场景树。在任何给定时刻，它们可能存在而没有活动的场景树。
+
+虽然技术上可以通过一些取巧的方法访问场景树，但 **强烈建议** 为此目的使用自定义的 `EditorPlugin`。
+创建一个 `EditorPlugin` 允许注册一个“自动加载的单例”，这个单例是一个 `Node`（或其派生类型），并且当游戏启动时，Godot 会自动将其加载到 `SceneTree` 中。

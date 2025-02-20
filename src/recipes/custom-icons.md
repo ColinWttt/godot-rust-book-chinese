@@ -5,14 +5,14 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Custom node icons
+# 自定义节点图标
 
-By default, all your custom types will use the `Node` icon in the editor UI -- e.g. in the scene tree or when selecting a node to create.
-While this can be serviceable, you may want to add custom icons to distinguish node types, especially if you plan to distribute your extension
-to others.
+默认情况下，所有自定义类型在编辑器 UI 中都会使用 `Node` 图标——例如，在场景树中或选择创建节点时。
 
-All icons must be registered by their class name in your `.gdextension` file. For this, you can add a new `icon` section. Classes are keys and
-paths to SVG files are values.
+虽然这种方式可以使用，但您可能希望为节点类型添加自定义图标，特别是如果您计划将扩展分发给其他人。
+
+所有图标必须通过其类名在 `.gdextension` 文件中进行注册。为此，您可以添加一个新的 `icon` 部分。类名是键，SVG 文件的路径是值。
+
 
 ```toml
 [icons]
@@ -20,33 +20,37 @@ paths to SVG files are values.
 MyClass = "res://addons/your_extension/filename.svg"
 ```
 
-```admonish note title="Icon paths"
-The path is based off the `res://` scheme, like other Godot resources. It is recommended to use Godot's convention of an `addons` folder,
-followed by the name of the addon. 
+```admonish note title="图标路径"
+路径基于 `res://` 方案，与其他 Godot 资源类似。建议使用 Godot 的惯例，即创建一个 `addons` 文件夹，并在其中放置插件的名称。
 
-Read more about the reasoning behind this in the Godot docs:
-- [Installing plugins][godot-installing-plugins]
-- [Making plugins][godot-making-plugins]
+更多关于此的解释，请参见 Godot 文档：
+
+- [安装插件][godot-installing-plugins]
+
+- [制作插件][godot-making-plugins]
+
 ```
 
 [godot-installing-plugins]: https://docs.godotengine.org/en/stable/tutorials/plugins/editor/installing_plugins.html#finding-plugins
 [godot-making-plugins]: https://docs.godotengine.org/en/stable/tutorials/plugins/editor/making_plugins.html
 
 
-## Formatting for custom icons
+## 自定义图标的格式
 
-The Godot docs have a [page dedicated][godot-icons] to tools and resources for creating custom icons. The long and short of it is:
 
-- Use the SVG format.
-- Aspect ratio is a square, 16x16 units is the reference size.
-- Refer to the [Godot icon colors mappings][gh-godot-colors].
-  - Use the light mode colors -- Godot only supports light-to-dark, but not dark-to-light color conversions.
+Godot 文档中有一页专门介绍了创建自定义图标的工具和资源。概括来说：
 
-```admonish help "Third-party article"
-The user _QueenOfSquiggles_ wrote an alternative version of this article [on her personal blog][qos-colors], which includes color previews for the
-light and dark themed colors.
+- 使用 SVG 格式。
+- 宽高比为正方形，16x16 单位是参考尺寸。
+- 参考 [Godot 图标颜色映射][gh-godot-colors]。
+  - 使用浅色模式的颜色——Godot 仅支持从浅色到深色的颜色转换，不支持深色到浅色的转换。
 
-Details on how to use her reference page is included [here][qos-info].
+
+```admonish help "第三方文章"
+用户 _QueenOfSquiggles_ 在她的个人博客上写了这篇文章的替代版本 [on her personal blog][qos-colors]，其中包括浅色和深色主题颜色的预览。
+
+关于如何使用她的参考页面的详细信息，请见 [here][qos-info]。
+
 ```
 
 [godot-icons]: https://docs.godotengine.org/en/stable/contributing/development/editor/creating_icons.html

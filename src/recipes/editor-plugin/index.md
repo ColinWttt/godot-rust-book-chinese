@@ -5,20 +5,19 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Editor plugins
+# 编辑器插件
 
+使用 `EditorPlugin` 类型非常类似于 [在 GDScript 中编写插件][gd-plugins] 的过程。
 
-Using `EditorPlugin` types is very similar to the process used when [writing plugins in GDScript][gd-plugins].
-Unlike GDScript plugins, godot-rust plugins are registered automatically and cannot be enabled/disabled in the
-Project Settings plugins pane.
+与 GDScript 插件不同，godot-rust 插件会自动注册，并且无法在项目设置的插件面板中启用/禁用。
 
-Plugins written in GDScript are automatically disabled if they have a code error, but because Rust is a compiled language,
-you cannot introduce compile-time errors.
+在 GDScript 中编写的插件如果存在代码错误会自动禁用，但由于 Rust 是一种编译语言，您无法引入编译时错误。
+
 
 [gd-plugins]: https://docs.godotengine.org/en/stable/tutorials/plugins/editor/making_plugins.html
 
 
-## Creating an `EditorPlugin`
+## 创建 `EditorPlugin`
 
 ```rust
 #[derive(GodotClass)]
@@ -30,18 +29,15 @@ struct MyEditorPlugin {
 #[godot_api]
 impl IEditorPlugin for MyEditorPlugin {
     fn enter_tree(&mut self) {
-        // Perform typical plugin operations here.
+    // 在这里执行典型的插件操作。
     }
 
     fn exit_tree(&mut self) {
-        // Perform typical plugin operations here.
+    // 在这里执行典型的插件操作。
     }
 }
 ```
 
-Since this is an `EditorPlugin`, it will be automatically added to the scene tree root. This means it can access the scene tree
-at runtime. Additionally, it is safe to access the `EditorInterface` singleton through this node,
-which allows adding different GUI elements to the editor directly. This can be helpful if you have an
-advanced GUI you want to implement.
+由于这是一个 `EditorPlugin`，它会自动被添加到场景树的根节点。这意味着它可以在运行时访问场景树。此外，可以通过此节点安全地访问 `EditorInterface` 单例，这允许您直接向编辑器添加不同的 GUI 元素。如果您想实现一个复杂的 GUI，这会非常有帮助。
 
 <!-- TODO: more plugins from https://docs.godotengine.org/en/stable/tutorials/plugins/editor/index.html -->

@@ -5,41 +5,43 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Inspector plugins
+# 检查器插件
 
-The inspector dock allows you to create custom widgets to edit properties through plugins.
-This can be beneficial when working with custom datatypes and resources, although you can
-use the feature to change the inspector widgets for built-in types. You can design custom
-controls for specific properties, entire objects, and even separate controls associated
-with particular datatypes.
-For more info, see
-[docs.godotengine.org](https://docs.godotengine.org/en/stable/classes/class_editorinspectorplugin.html#class-editorinspectorplugin).
+检查器面板允许您通过插件，创建自定义控件来编辑属性。
+
+这在处理自定义数据类型和resources时非常有用，尽管您也可以使用此功能来更改内置类型的检查器控件。
+您可以为特定属性、整个对象，甚至与特定数据类型关联的独立控件设计自定义控件。
+
+更多信息，请参见 [docs.godotengine.org](https://docs.godotengine.org/en/stable/classes/class_editorinspectorplugin.html#class-editorinspectorplugin)。
+
+Godot文档中的[示例](https://docs.godotengine.org/en/stable/tutorials/plugins/editor/inspector_plugins.html)，该示例会将整数输入替换为一个按键，该按键生成一个随机值。
+
 
 The [example](https://docs.godotengine.org/en/stable/tutorials/plugins/editor/inspector_plugins.html)
-in the Godot docs in Rust. It will replace integer input with a button that creates a random value.
 
-Before (int input):
+
+之前（整数输入）：
 
 ![Before](./images/before.png)
 
-After (button):
+之后（按键）：
 
 ![After](./images/after.png)
 
-Add this dependency to Rust with the shell in the same directory as `Cargo.toml`.
+在终端中与 `Cargo.toml` 相同目录下添加此依赖：
 
 ```bash
 cargo add rand
 ```
 
-Add file `addon.rs` and import it in `lib.rs`:
+创建 `addon.rs` 文件并在 `lib.rs` 中导入它：
 
 ```rust
 // file: lib.rs
 mod addon;
 ```
 
-Add the following imports at the beginning of the file:
+在文件开头添加以下导入：
 
 ```rust
 use godot::classes::{
@@ -54,7 +56,7 @@ use rand::Rng;
 Since Rust is a statically typed language, we will proceed in reverse order unlike in Godot documentation, to avoid encountering errors unnecessarily.
 
 
-## Add Property Editor
+## 添加属性编辑器
 
 To begin with, let's define the editor for properties:
 
@@ -128,7 +130,7 @@ impl RandomIntEditor {
 ```
 
 
-## Add Inspector plugin
+## 添加检查器插件
 
 Now we need to connect this editor to fields with an integer type.
 To do this, we need to create an `EditorInspectorPlugin`.
@@ -178,7 +180,7 @@ representation; if not, it's necessary to return `false`.
 This allows you to control where and how processing is done by this plugin.
 
 
-## Adding an editor plugin
+## 添加编辑器插件
 
 Only one thing left to do: define the editor plugin that will kick off all this magic!
 This can be a generic `EditorPlugin` or a more specific `InspectorEditorPlugin`, depending

@@ -5,15 +5,14 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Custom resources
+# 自定义 resources
 
-Custom `Resource`s are exposed to the end user to use within their development. `Resource`s can store data that is easily edited from within
-the editor GUI. For example, you can create a custom `AudioStream` type that handles a new and interesting audio file type.
+自定义 `Resource` 类型可以暴露给终端用户，在他们的开发过程中使用。`Resource` 类型能够存储可以在编辑器 GUI 中轻松编辑的数据。例如，您可以创建一个自定义的 `AudioStream` 类型，用来处理一种新颖且有趣的音频文件类型。
 
 
-## Registering a `Resource`
+## 注册 `Resource`
 
-This workflow is similar to the [Hello World example][hello]:
+这个工作流与  [Hello World example][hello]类似：
 
 ```rust
 #[derive(GodotClass)]
@@ -23,13 +22,12 @@ struct ResourceType {
 }
 ```
 
-It is important that similar to defining custom resources in GDScript, marking this class as a "tool class"
-is required to be usable within the editor.
+与在 GDScript 中定义自定义resources类似，重要的是将这个类标记为“工具类”，这样它才可以在编辑器中使用。
 
-The above resource does not export any variables. While not all resources require exported variables, most do.
+上述资源没有导出任何变量。虽然并非所有资源都需要导出变量，但大多数资源都需要。
 
-The systems for registering functions, properties, and more are described in detail in the
-[Registering Rust symbols][register] section.
+关于如何注册函数、属性等系统，可以在 [注册 Rust 符号][register] 部分找到详细描述。
+
 
 [hello]: ../intro/hello-world.md
 [register]: ../register/index.html
