@@ -5,24 +5,26 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Getting Started
+# 入门
 
-This chapter guides you through the process of setting up **gdext** and developing your first application with it.
+本章将引导你完成设置**gdext**并开发第一个应用程序。
 
 
 ```admonish note
-To read this book, we assume intermediate Rust knowledge. If you are new to Rust, reading the [Rust Book][rust-book] first is highly encouraged.
-You won't need to know 100% of the language, but you should know basic concepts (type system, generics, traits, borrow checking, safety).
+为了阅读本书，我们假设你具备中级Rust知识。如果你是Rust新手，强烈建议先阅读[Rust书籍][rust-book]。
 
-Some familiarity with Godot is also necessary, although it is possible to learn gdext together with Godot. 
-However, we won't reiterate basic Godot concepts -- so if you choose that approach, we recommend to read
-[the official Godot tutorial][godot-tutorial] in parallel.
+你不需要完全掌握语言，但应了解一些基本概念（类型系统、泛型、traits、借用检查、安全性）。
+
+此外，了解一些Godot的基础知识也是必要的，尽管你也可以在学习gdext的同时学习Godot。
+
+然而，我们不会重复Godot的基础概念——因此，如果你选择这种方式，建议你同时阅读[官方Godot教程][godot-tutorial]。
+
 ```
 
-In addition to this book, you can use the following resources to learn more about the project:
+除了本书，你还可以通过以下资源来了解更多关于该项目的信息：
 
-- The [official API documentation][api-docs].
-- A small example game [Dodge the Creeps][dodge-the-creeps].
+- [官方API文档][api-docs].
+- 一个小型演示游戏 [Dodge the Creeps][dodge-the-creeps].
 
 
 [api-docs]: https://godot-rust.github.io/docs/gdext
