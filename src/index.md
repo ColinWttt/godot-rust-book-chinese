@@ -56,19 +56,19 @@ godot-rust是一个由[社区开发][github-contributors]的开源项目。它�
 
    在GDNative中，Rust类可以作为 _原生脚本_ 注册。这些脚本可以附加到节点上，以增强其功能，类似于GDScript脚本的附加方式。而GDExtension则直接支持将Rust类型作为引擎类，参见下一点。
 
-在将GDScript代码迁移到Rust时，请记住，使用Rust代码的首选方式是通过类，而不是脚本。得益于出色的贡献，我们目前 _确实_ 支持[Rust脚本][api-obj-script]，尽管它们的开发程度不如类。
+   在将GDScript代码迁移到Rust时，请记住，使用Rust代码的首选方式是通过类，而不是脚本。得益于出色的贡献，我们目前 _确实_ 支持[Rust脚本][api-obj-script]，尽管它们的开发程度不如类。
 
 
-1. **头等对象（First-class citizen）类型**
+2. **头等对象（First-class citizen）类型**
 
    在Godot 3中，用户定义的原生类在编辑器中有很多限制：类型注解不完全支持，它们不能轻松用作自定义`resources`等。而通过GDExtension，Rust中用户定义的类，行为上更接近GDScript类。它们也不再需要单独的`.gdns`文件来注册。
 
-2. **始终开启(Always-on)**
+3. **始终开启(Always-on)**
 
    GDNative区分了“工具”脚本和“普通”脚本。在GDExtension中，原生逻辑默认在Godot编辑器启动时就运行，但godot-rust明确改变了这种行为。
    在Rust中，所有虚拟回调（`ready`、`proces`s等）默认在编辑器模式下不会调用。可以通过`#[class(tool)]`和[`ExtensionLibrary`][extension-library-doc]trait来配置此行为。
 
-3. **编辑器打开时无需重新编译**
+4. **编辑器打开时无需重新编译**
 
    在Godot 4.2之前，在编辑器启动后，无法重新编译Rust库并让更改生效。编辑器重新加载功能已实现，详情请见 [issue #66231]。
 
