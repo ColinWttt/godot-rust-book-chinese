@@ -361,7 +361,7 @@ impl ISprite2D for Player {
 GDScript 使用属性语法；而 Rust 需要显式的方法调用。另外，访问基类方法 —— 例如本例中的 `rotate()`，
 需要通过 `base()` 和 `base_mut()` 方法来实现。
 
-```admonish warning title="Direct field access"
+```admonish warning title="直接访问字段"
 不要直接使用 `self.base` 字段。应使用 `self.base()` 或 `self.base_mut()`，否则您将无法访问并调用基类方法。
 ```
 

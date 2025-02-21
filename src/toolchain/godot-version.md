@@ -181,7 +181,7 @@ See [The Cargo Book](https://doc.rust-lang.org/cargo/reference/config.html) for 
 
 ---
 
-**Footnotes**
+**脚注**
 
 [^compat-4-0]: Godot 4.0 has been released before the GDExtension API committed to stability, so no single 4.0.x release is compatible with any
 other release (not even patch versions among each other). We provide 4.0 API levels, but due to their limited utility, we will phase out

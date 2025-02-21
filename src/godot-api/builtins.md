@@ -197,7 +197,7 @@ assert_eq!(part.as_slice(), &[0x0B, 0x0C]);
 
 ---
 
-**Footnotes**
+**脚注**
 
 [^packed-vec4]: `PackedVector4Array` 仅在Godot 4.3版本中可用；在 [PR #85474][godot-packed-vector4]中添加。.
 
