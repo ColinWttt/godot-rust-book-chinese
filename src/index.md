@@ -63,7 +63,7 @@ godot-rust是一个由[社区开发][github-contributors]的开源项目。它�
 
    在Godot 3中，用户定义的原生类在编辑器中有很多限制：类型注解不完全支持，它们不能轻松用作自定义`resources`等。而通过GDExtension，Rust中用户定义的类，行为上更接近GDScript类。它们也不再需要单独的`.gdns`文件来注册。
 
-3. **始终开启(Always-on)**
+3. **始终开启（Always-on）**
 
    GDNative区分了“工具”脚本和“普通”脚本。在GDExtension中，原生逻辑默认在Godot编辑器启动时就运行，但godot-rust明确改变了这种行为。
    在Rust中，所有虚拟回调（`ready`、`proces`s等）默认在编辑器模式下不会调用。可以通过`#[class(tool)]`和[`ExtensionLibrary`][extension-library-doc]trait来配置此行为。

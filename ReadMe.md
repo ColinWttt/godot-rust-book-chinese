@@ -1,6 +1,6 @@
 # godot-rust中文文档
 
-godot-rust中文文档是对**gdext**[用户指南][godot-rust-book]的翻译，gdext是 Godot 4的Rust绑定。它涵盖了大量的概念，并且补充了 [API 文档][gdext-docs]。对于 Godot 3，可以参考 [gdnative-book]。
+godot-rust中文文档是对**gdext**[用户指南][godot-rust-book]的翻译，gdext是Godot 4的Rust绑定。该文档涵盖了大量的概念，并且补充了 [API 文档][gdext-docs]。对于 Godot 3，可以参考 [gdnative-book]。
 
 > [!Tip]
 > The book is deployed at **[colinwttt.github.io/godot-rust-book-chinese][book-web]**.
