@@ -26,7 +26,7 @@
 - [工具链](toolchain/index.md)
   - [兼容性和稳定性](toolchain/compatibility.md)
   - [选择Godot版本](toolchain/godot-version.md)
-  - [Debugging](toolchain/debugging.md)
+  - [调试](toolchain/debugging.md)
   - [导出到Android](toolchain/export-android.md)
   - [导出到网页](toolchain/export-web.md)
   - [导出到macOS和iOS](toolchain/export-mac-and-ios.md)
