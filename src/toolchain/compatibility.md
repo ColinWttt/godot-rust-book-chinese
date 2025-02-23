@@ -5,80 +5,74 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Compatibility and stability
+# 兼容性和稳定性
 
-The gdext library supports all stable Godot releases starting from Godot 4.0.
-
-
-## Compatibility with Godot
-
-When developing extension libraries (or just "extensions"), you need to consider which engine version you want to target.
-There are two conceptually different versions:
-
-- **API version** is the version of GDExtension against which gdext (and the code of your extension) is compiled.
-- **Runtime version** is the version of Godot in which the library built with gdext is run.
-
-The two versions can be different, but there are certain constraints (see [below](#current-guarantees)).
+gdext 库支持从 Godot 4.0 起的所有Godot稳定版本。
 
 
-### Philosophy
+## 与 Godot 的兼容性
 
-We take compatibility with the engine seriously, in an attempt to build an ecosystem of extensions that are interoperable with multiple
-Godot versions. Nothing is more annoying than updating the engine and recompiling 10 plugins/extensions.
+在开发扩展库（或简称“扩展”）时，你需要考虑目标的引擎版本。
+这里有两个概念上不同的版本：
 
-This is sometimes difficult, because:
+- **API 版本**：指的是编译 gdext（和你的扩展代码）时所针对的 GDExtension 版本。
+- **运行时版本**：指的是用 gdext 构建的库运行的 Godot 版本。
 
-- Godot may introduce subtle breaking changes of which we are not aware.
-- Some changes that are non-breaking in C++ and GDScript are breaking in Rust (e.g. providing a default value for a previously required parameter).
-- Using newer features needs to come with a fallback/polyfill for older Godot versions.
-
-We run CI jobs against multiple Godot versions, to get a certain level of confidence that updates do not break compatibility.
-Nevertheless, the number of possible combinations is large and only growing, so we may miss certain issues.
-If you find incompatibilities or violations of the rules stated below, please let us know.
+这两个版本可以不同，但有一定的约束（见[下文](#当前保证)）。
 
 
-### Current guarantees
+### 开发理念
 
-Every extension developed with API version `4.0.x` **MUST** be run with the same runtime version.
+我们非常重视与引擎的兼容性，力求构建一个与多个 Godot 版本兼容的扩展生态系统。
+没有什么比更新引擎后需要重新编译 10 个插件/扩展更让人头疼了。
 
-- In particular, it is not possible to run an extension compiled with API version `4.0.x` in Godot 4.1 or later.
-  This is due to breaking changes in Godot's GDExtension API.
+但这有时会很困难，因为：
 
-Starting from Godot 4.1 official release, extensions can be loaded by any Godot version, as long as
-_runtime version **>=** API version_.
+- Godot 可能会引入一些我们没有意识到的微小的破坏性变更。
+- 一些在 C++ 和 GDScript 中不破坏兼容性的变更，在 Rust 中可能会导致破坏性变化（例如，给以前必需的参数提供默认值）。
+- 使用新特性时，需要为旧版 Godot 提供回退或填充方案。
 
-- You can run a `4.1` extension in Godot `4.1.1` or `4.2`.
-- You cannot run a `4.2` extension in Godot `4.1.1`.
-- This is subject to change depending on how the GDExtension API evolves and how many breaking changes we have to deal with.
-
-
-### Out of scope
-
-We do **not** invest effort in maintaining compatibility with:
-
-1. Godot in-development versions, except for the latest `master` branch.
-   - Note that we may take some time to catch up with the latest changes, so please don't report issues within a few days after
-     upstream changes have landed.
-2. Non-stable releases (alpha, beta, RC).
-3. Third-party bindings or GDExtension APIs (C#, C++, Python, ...).
-   - These may have their own versioning guarantees and release cycles; and there may be specific bugs to such an integration.
-     If you find an issue with gdext and another binding, reproduce it in GDScript to make sure it's relevant for us.
-   - We do however maintain compatibility with Godot, so if integrations go through the engine (e.g. Rust calls a method whose
-     implementation is in C#), this should work.
-4. Godot with non-standard build flags (e.g. disabled modules).
-5. Godot forks or engines running third-party modules.
+我们会在多个 Godot 版本上运行持续集成（CI）任务，以确保更新不会破坏兼容性。然而，可能的版本组合非常多，而且还在不断增加，所以我们可能会漏掉某些问题。
+如果你发现不兼容或违反以下规则的情况，请告知我们。
 
 
-## Rust API stability
+### 当前保证
 
-We are still in a phase where a lot of gdext's foundation needs to be built and refined. As such, **expect breaking changes**.
-At the current stage, we believe that making APIs more ergonomic and accessible has priority over long-term stability.
-The alternative would be to lock us early into a design corner.
+使用 API 版本 `4.0.x` 开发的每个扩展**必须**在相同的运行时版本下运行。
 
-Note that many such breaking changes are externally motivated, for example:
+- 需要注意，无法在 Godot 4.1 或更高版本中运行使用 API 版本 `4.0.x` 编译的扩展，因为 Godot 的 GDExtension API 已发生破坏性变化。
 
-- GDExtension changes in a way that cannot be abstracted from the user.
-- There are subtleties in the type system or runtime guarantees that can be modeled in a better, safer way (e.g. typed arrays, RIDs).
-- We get feedback from game developers and other users stating that certain workflows are very cumbersome.
+从 Godot 4.1 正式发布开始，扩展可以在任何 Godot 版本中加载，只要 _运行时版本 **>=** API 版本_。
 
-Once we get into a more stable feature set, we plan to release versions on crates.io and follow semantic versioning.
+- 你可以在 Godot `4.1.1` 或 `4.2` 中运行 `4.1` 的扩展。
+- 你不能在 Godot `4.1.1` 中运行 `4.2` 的扩展。
+- 这一点可能会随着 GDExtension API 的发展和我们需要处理的破坏性变更的增加而有所调整。
+
+
+### 不在支持范围内
+
+我们**不**维护以下内容的兼容性：
+
+1. Godot 的开发版本，除非是最新的`master`分支。
+   - 请注意，我们可能需要一些时间来跟进最新的变更，因此请不要在上游更改合并后的几天内报告问题。
+2. 非稳定版本（alpha、beta、RC）。
+3. 第三方绑定或 GDExtension API（如 C#、C++、Python 等）。
+   - 这些可能有自己的版本保证和发布周期，也可能有特定的集成问题。如果你在 gdext 和其他绑定中发现问题，请先在 GDScript 中重现问题，以确保问题与我们相关。
+   - 不过，我们会保持与 Godot 的兼容性，因此如果集成通过引擎进行（例如，Rust 调用一个 C# 实现的方法），应该是可以正常工作的。
+4. 使用非标准构建标志的 Godot（例如，禁用某些模块）。
+5. Godot分支或使用第三方模块的 Godot 引擎。
+
+
+## Rust API的稳定性
+
+我们仍处于构建和完善 gdext 基础的阶段，因此**可以预期会有破坏性变化**。
+在当前阶段，我们认为让 API 更加符合人体工程学和易于使用的优先级高于长期稳定性。
+否则，我们可能会过早地把自己锁定在某种设计角落里。
+
+需要注意的是，许多破坏性变化是由外部因素引起的，比如：
+
+- GDExtension 发生了无法从用户角度抽象的变化。
+- 类型系统或运行时保证中的一些细微差别，可以通过更好、更安全的方式被构建（例如类型化数组、RIDs）。
+- 我们收到了来自游戏开发者和其他用户的反馈，认为某些工作流程非常繁琐。
+
+一旦我们进入更稳定的特性集，我们计划在 crates.io 上发布版本，并遵循语义版本控制。
