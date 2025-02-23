@@ -265,7 +265,7 @@ Rust 本身不支持继承，但 gdext API 在某种程度上模拟了它。
 
 在本例中，我们声明一个名为 `Player` 的类，它继承自 `Sprite2D`（一个node类型）。
 这可以在 `lib.rs` 中定义，也可以在单独的 `player.rs` 文件中定义。
-如果选择后者，请不要忘记在 `lib.rs` 文件中声明 `mod player`;。
+如果选择后者，请不要忘记在 `lib.rs` 文件中声明 `mod player;` 。
 
 ```rust
 use godot::prelude::*;

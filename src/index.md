@@ -66,7 +66,7 @@ godot-rust是一个由[社区开发][github-contributors]的开源项目。它�
 3. **始终开启（Always-on）**
 
    GDNative区分了“工具”脚本和“普通”脚本。在GDExtension中，原生逻辑默认在Godot编辑器启动时就运行，但godot-rust明确改变了这种行为。
-   在Rust中，所有虚拟回调（`ready`、`proces`s等）默认在编辑器模式下不会调用。可以通过`#[class(tool)]`和[`ExtensionLibrary`][extension-library-doc]trait来配置此行为。
+   在Rust中，所有虚拟回调（`ready`、`process`等）默认在编辑器模式下不会调用。可以通过`#[class(tool)]`和[`ExtensionLibrary`][extension-library-doc]trait来配置此行为。
 
 4. **编辑器打开时无需重新编译**
 
