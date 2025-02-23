@@ -25,10 +25,10 @@
 
 **复合类型**
 
-- Variant (able to hold anything): `Variant`
+- Variant （能够容纳任何东西）: `Variant`
 - String 类型: `String`, `StringName`, `NodePath`
-- Ref-counted containers: `Array` (`Array[T]`), `Dictionary`
-- Packed arrays: `Packed*Array` for following element types:  
+- 引用计数容器: `Array` (`Array[T]`), `Dictionary`
+- Packed arrays: `Packed*Array` 对于以下元素类型:  
   `Byte`, `Int32`, `Int64`, `Float32`, `Float64`, `Vector2`, `Vector3`, `Vector4`[^packed-vec4], `Color`, `String`
 - Functional: `Callable`, `Signal`
 
@@ -38,11 +38,11 @@
 - Bounding boxes: `Rect2`, `Rect2i`, `AABB`
 - Matrices: `Transform2D`, `Transform3D`, `Basis`, `Projection`
 - Rotation: `Quaternion`
-- Geometric objects: `Plane`
+- 几何对象: `Plane`
 
 **杂项**
 
-- Color: `Color`
+- 颜色: `Color`
 - Resource ID: `RID`
 
 
@@ -61,7 +61,7 @@ gdext API 中的 Rust 类型尽可能以最接近的方式表示相应的 Godot 
 | `StringName`              | `StringName`                          | `"MyClass"` [^str-types]      |
 | `NodePath`                | `NodePath`                            | `"Nodes/MyNode"` [^str-types] |
 | `Array[T]`                | `Array<T>`                            | `array![1, 2, 3]`             |
-| `Array`                   | `VariantArray`<br>or `Array<Variant>` | `varray![1, "two", true]`     |
+| `Array`                   | `VariantArray`<br>或 `Array<Variant>` | `varray![1, "two", true]`     |
 | `Dictionary`              | `Dictionary`                          | `dict!{"key": "value"}`       |
 | `AABB`                    | `Aabb`                                | `Aabb::new(pos, size)`        |
 | `Object`                  | `Gd<Object>`                          | `Object::new_alloc()`         |
@@ -155,12 +155,12 @@ let a = array!["one", "two", "three"];
 let d = dict!{"one": 1, "two": 2.0, "three": Vector3::ZERO};
 
 for elem in a.iter_shared() {
-    // elem has type GString.
+    // elem 的类型是 GString.
     println!("Element: {elem}");
 }
 
 for (key, value) in d.iter_shared() {
-    // key and value both have type Variant.
+    // key 和 value 的类型都是 Variant.
     println!("Key: {key}, value: {value}");
 }
 ```
@@ -172,7 +172,7 @@ for (key, value) in d.iter_shared() {
 `*` 代表元素类型，例如 `PackedByteArray` 或 `PackedVector3Array`.
 
 ```rust
-// Create from slices.
+// 从切片创建
 let bytes = PackedByteArray::from(&[0x0A, 0x0B, 0x0C]);
 let ints = PackedInt32Array::from(&[1, 2, 3]);
 
@@ -185,7 +185,7 @@ let bytes_slice: &[u8] = b.as_slice();
 let ints_slice: &mut [i32] = i.as_mut_slice();
 
 // 使用相同类型访问数组的子范围。
-let part: PackedByteArray = bytes.subarray(1, 3); // 1..3, or 1..=2
+let part: PackedByteArray = bytes.subarray(1, 3); // 1..3, 或 1..=2
 assert_eq!(part.as_slice(), &[0x0B, 0x0C]);
 ```
 
