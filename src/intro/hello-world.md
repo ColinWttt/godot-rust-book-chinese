@@ -58,9 +58,6 @@
 cargo new "{YourCrate}" --lib
 ```
 
-其中 {YourCrate} 将作为您选择的 crate 名称的占位符。为了与文件结构保持一致，我们选择 Rust 作为 crate 名称。
-使用 --lib 创建一个库（而非可执行文件），但是这个 crate 还需要一些额外的配置。
-
 其中 `{YourCrate}` 将作为您选择的 crate 名称的占位符。为了与文件结构保持一致，我们选择 `rust` 作为 crate 名称。使用 `--lib` 创建一个库（而非可执行文件），但是这个 crate 还需要一些额外的配置。
 
 打开`Cargo.toml`文件并按以下方式修改：
