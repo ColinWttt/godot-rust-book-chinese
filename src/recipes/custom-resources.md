@@ -16,15 +16,30 @@
 
 ```rust
 #[derive(GodotClass)]
-#[class(tool, init, base=Resource)]
+#[class(init, base=Resource)]
 struct ResourceType {
     base: Base<Resource>,
 }
 ```
 
-与在 GDScript 中定义自定义resources类似，重要的是将这个类标记为“工具类”，这样它才可以在编辑器中使用。
+上述resource没有导出任何变量。虽然并非所有resource都需要导出变量，但大多数resource都需要。
 
-上述资源没有导出任何变量。虽然并非所有资源都需要导出变量，但大多数资源都需要。
+如果你的自定义resource有需要在编辑器中运行的生命周期方法（例如 `ready()`、`process()` 等），你应该使用 `#[class(tool)]` 注解该类。
+
+```rust
+#[derive(GodotClass)]
+#[class(tool, init, base=Resource)]
+struct ResourceType {
+    base: Base<Resource>,
+}
+
+#[godot_api]
+impl IResource for ResourceType {
+  fn init(base: Base<Resource>) -> Self { ... }
+}
+```
+
+与在 GDScript 中定义自定义resources类似，重要的是将这个类标记为“工具类”，这样它才可以在编辑器中使用。
 
 关于如何注册函数、属性等系统，可以在 [注册 Rust 符号][register] 部分找到详细描述。
 
