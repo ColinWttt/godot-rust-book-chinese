@@ -14,7 +14,7 @@
 你可能感兴趣的其他资源：
 
 📘 [最新的API文档][api-docs]  
-⚗️ [Demo项目][demo-projects]
+⚗️ [Demo项目][demo-projects]  
 📄 [英文文档][book-en]  
 📔 [gdnative手册 (Godot3绑定)][gdnative-book]  
 
