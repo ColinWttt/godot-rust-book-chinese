@@ -5,43 +5,43 @@
   ~ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 
-# Ecosystem
+# 生态系统（Ecosystem）
 
-This chapter lists third-party projects that extend godot-rust with additional functionality: tools, libraries, integrations, apps, and more.
-The projects are grouped by type of project and their respective domain (although such classification is not always clear-cut).
+本章列出了扩展 godot-rust 额外功能的第三方项目：工具、库、集成、应用等。
+这些项目按类型和各自的领域进行分组（尽管这种分类并不总是完全明确）。
 
-If you'd like to add a project, please read [Contributing](#contributing)!
+如果你想添加一个项目，请阅读[贡献指南](#贡献指南)！
 
-A list for games is also planned, and will be showcased on a separate page.
+另外，我们计划为游戏项目单独创建一个列表，并会在一个独立的页面上展示。
 
 
 ## 目录
 
 <!-- toc -->
 
-## List of 3rd-party projects
+## 第三方项目列表
 
 
-### 🏛️ Rust libraries
+### 🏛️ Rust 库
 
-| Project                                                                        | Further links                                                            | Activity                                      |
+| 项目                                                                        | 相关链接                                                            | 活跃度                                      |
 |--------------------------------------------------------------------------------|--------------------------------------------------------------------------|-----------------------------------------------|
-| 🌀 _**Async**_                                                                 |                                                                          |                                               |
-| **[gdext-coroutines]**<br/>Integrate Rust coroutines with Godot's async/await. | [crates.io][gdext-coroutines-crate], [Discord][gdext-coroutines-discord] | ![gdext-coroutines][gdext-coroutines-badge]   |
-| **[godot-tokio]**<br/>Create Tokio runtime for use with godot-rust.            | [crates.io][godot-tokio-crate], [Discord][godot-tokio-discord]           | ![godot-tokio][godot-tokio-badge]             |
+| 🌀 _**异步**_                                                                 |                                                                          |                                               |
+| **[gdext-coroutines]**<br/>将 Rust 协程与 Godot 的 async/await 集成。 | [crates.io][gdext-coroutines-crate], [Discord][gdext-coroutines-discord] | ![gdext-coroutines][gdext-coroutines-badge]   |
+| **[godot-tokio]**<br/>为 godot-rust 创建 Tokio 运行时。          | [crates.io][godot-tokio-crate], [Discord][godot-tokio-discord]           | ![godot-tokio][godot-tokio-badge]             |
 | ___________________________________________________                            |                                                                          |                                               |
-| 🏗️ _**Project workflow**_                                                     |                                                                          |                                               |
-| **[gd-rehearse]**<br/>Unit tests for godot-rust code.                          | [Discord][gd-rehearse-discord]                                           | ![gd-rehearse][gd-rehearse-badge]             |
-| **[gd-props]**<br/>Resource serialization using `serde`.                       | [Discord][gd-props-discord]                                              | ![gd-props][gd-props-badge]                   |
-| **[gdext-generation]**<br/>Auto-generate the `.gdextension` file.              | [Discord][gdext-generation-discord]                                      | ![gdext-generation][gdext-generation-badge]   |
-| **[godot-rust-cli]**<br/>CLI scripts for Godot with Rust.                      | [Discord][godot-rust-cli-discord]                                        | ![godot-rust-cli][godot-rust-cli-badge]   |
+| 🏗️ _**项目工作流程**_                                                     |                                                                          |                                               |
+| **[gd-rehearse]**<br/>为 godot-rust 代码编写单元测试。                      | [Discord][gd-rehearse-discord]                                           | ![gd-rehearse][gd-rehearse-badge]             |
+| **[gd-props]**<br/>使用 `serde` 进行资源序列化。                       | [Discord][gd-props-discord]                                              | ![gd-props][gd-props-badge]                   |
+| **[gdext-generation]**<br/>自动生成 `.gdextension` 文件。              | [Discord][gdext-generation-discord]                                      | ![gdext-generation][gdext-generation-badge]   |
+| **[godot-rust-cli]**<br/>为 Godot 提供的 Rust CLI 脚本。                    | [Discord][godot-rust-cli-discord]                                        | ![godot-rust-cli][godot-rust-cli-badge]   |
 | ___________________________________________________                            |                                                                          |                                               |
-| 📜 _**Scripting**_                                                             |                                                                          |                                               |
-| **[godot-rust-script]**<br/>Allows Rust scripts to be added to nodes.          |                                                                          | ![godot-rust-script][godot-rust-script-badge] |
+| 📜 _**脚本编程**_                                                             |                                                                          |                                               |
+| **[godot-rust-script]**<br/>允许将 Rust 脚本添加到节点。         |                                                                          | ![godot-rust-script][godot-rust-script-badge] |
 | ___________________________________________________                            |                                                                          |                                               |
-| 🎮 _**Game development**_                                                      |                                                                          |                                               |
-| **[SpireTween]**<br/>Alternative tweening library for Godot 4.2+.              | [Discord][spire-tween-discord]                                           | ![SpireTween][spire-tween-badge]              |
-| **[GridForge]**<br/>Generic abstraction for grid maps.                         | [Discord][gridforge-discord]                                             | ![GridForge][gridforge-badge]                 |
+| 🎮 _**游戏开发**_                                                      |                                                                          |                                               |
+| **[SpireTween]**<br/>Godot 4.2+ 的替代tween库。                   | [Discord][spire-tween-discord]                                           | ![SpireTween][spire-tween-badge]              |
+| **[GridForge]**<br/>网格地图的通用抽象。                         | [Discord][gridforge-discord]                                             | ![GridForge][gridforge-badge]                 |
 
 [gdext-coroutines]: https://github.com/Houtamelo/gdext_coroutines
 [gdext-coroutines-crate]: https://crates.io/crates/gdext_coroutines
@@ -81,28 +81,28 @@ A list for games is also planned, and will be showcased on a separate page.
 [gridforge-badge]: https://img.shields.io/github/last-commit/StatisMike/grid-forge
 
 
-### 🧩 Editor plugins
+### 🧩 编辑器插件
 
-| Project                                                                       | Further links                           | Activity                                            |
+| 项目                                                                       | 相关链接                           | 活跃度                                            |
 |-------------------------------------------------------------------------------|-----------------------------------------|-----------------------------------------------------|
-| 📐 _**User interface**_                                                       |                                         |                                                     |
-| **[Godot-Tour]**<br/>UI tours/tutorials for editor and in-game.               | [Discord][godot-tour-discord]           | ![Godot-Tour][godot-tour-badge]                     |
+| 📐 _**用户界面**_                                                       |                                         |                                                     |
+| **[Godot-Tour]**<br/>为编辑器和游戏内提供 UI 导览/教程。               | [Discord][godot-tour-discord]           | ![Godot-Tour][godot-tour-badge]                     |
 | ___________________________________________________                           |                                         |                                                     |
-| 🎨 _**Graphics**_                                                             |                                         |                                                     |
-| **[Godot Trail 3D]**<br/>Adds a `Trail3D` node to Godot.                      | [Discord][godot-trail-3d-discord]       | ![Godot Trail 3D][godot-trail-3d-badge]             |
+| 🎨 _**图形**_                                                             |                                         |                                                     |
+| **[Godot Trail 3D]**<br/>为 Godot 添加 `Trail3D` 节点。                      | [Discord][godot-trail-3d-discord]       | ![Godot Trail 3D][godot-trail-3d-badge]             |
 | ___________________________________________________                           |                                         |                                                     |
-| 🧲 _**Physics**_                                                              |                                         |                                                     |
-| **[Godot Rapier Physics]**<br/>Rapier 2D + 3D integration for Godot.          | [Discord][godot-rapier-physics-discord] | ![Godot Rapier Physics][godot-rapier-physics-badge] |
-| **[Godot Rapier 3D]**<br/>GDExtension that enables Rapier physics with Godot. | [Discord][godot-rapier-3d-discord]      | ![Godot Rapier 3D][godot-rapier-3d-badge]           |
+| 🧲 _**物理**_                                                              |                                         |                                                     |
+| **[Godot Rapier Physics]**<br/>为 Godot 提供 Rapier 2D 和 3D 物理引擎集成。    | [Discord][godot-rapier-physics-discord] | ![Godot Rapier Physics][godot-rapier-physics-badge] |
+| **[Godot Rapier 3D]**<br/>启用 Godot 使用 Rapier 物理引擎的 GDExtension。 | [Discord][godot-rapier-3d-discord]      | ![Godot Rapier 3D][godot-rapier-3d-badge]           |
 | ___________________________________________________                           |                                         |                                                     |
-| 🧙‍♂️ _**Storytelling**_                                                      |                                         |                                                     |
- | **[nobodywho]**<br/>Interact with local LLMs for interactive storytelling.    | [Discord][nobodywho-discord]            | ![nobodywho][nobodywho-badge]                       |
+| 🧙‍♂️ _**叙事**_                                                      |                                         |                                                     |
+ | **[nobodywho]**<br/>与本地 LLM 互动进行互动式故事讲述。    | [Discord][nobodywho-discord]            | ![nobodywho][nobodywho-badge]                       |
 | ___________________________________________________                           |                                         |                                                     |
-| 🏗️ _**Project workflow**_                                                    |                                         |                                                     |
-| **[godot-sandbox]**<br/>Secure modding support for C++, Rust and others.      |                                         | ![godot-sandbox][godot-sandbox-badge]               |
+| 🏗️ _**项目工作流程**_                                                    |                                         |                                                     |
+| **[godot-sandbox]**<br/>为 C++、Rust 和其他语言提供安全的mod支持。      |                                         | ![godot-sandbox][godot-sandbox-badge]               |
 | ___________________________________________________                           |                                         |                                                     |
-| 🌐 _**Localization**_                                                        |                                         |                                                     |
-| **[Fluent Translation]**<br/>Translation using Mozilla's Fluent (FTL).       | [Asset Library][godot-fluent-translation-assetlib] | ![godot-fluent-translation][godot-fluent-translation-badge] |
+| 🌐 _**本地化**_                                                        |                                         |                                                     |
+| **[Fluent Translation]**<br/>使用 Mozilla 的 Fluent (FTL) 进行翻译。       | [Asset Library][godot-fluent-translation-assetlib] | ![godot-fluent-translation][godot-fluent-translation-badge] |
 
 [Godot-Tour]: https://github.com/Decapitated/Godot-Tour
 [godot-tour-discord]: https://discord.com/channels/723850269347283004/1272688558070698037/1272688558070698037
@@ -132,16 +132,16 @@ A list for games is also planned, and will be showcased on a separate page.
 [godot-fluent-translation-badge]: https://img.shields.io/github/last-commit/RedMser/godot-fluent-translation
 
 
-### 🖥️ Applications
+### 🖥️ 应用
 
-| Project                                                                 | Further links                          | Activity                                          |
+| 项目                                                                 | 相关链接                          | 活跃度                                          |
 |-------------------------------------------------------------------------|----------------------------------------|---------------------------------------------------|
-| 🎛️ _**Software platforms**_                                            |                                        |                                                   |
-| **[Godot Boy]**<br/>Game boy emulator in Godot, written in Rust.        | [Discord][godot-boy-discord]           | ![Godot Boy][godot-boy-badge]                     |
-| **[GDScript Transpiler]**<br/>Reimplements parts of GDScript in Rust.   | [Discord][gdscript-transpiler-discord] | ![GDScript Transpiler][gdscript-transpiler-badge] |
+| 🎛️ _**软件平台**_                                            |                                        |                                                   |
+| **[Godot Boy]**<br/>用 Rust 编写的 Game Boy 模拟器。       | [Discord][godot-boy-discord]           | ![Godot Boy][godot-boy-badge]                     |
+| **[GDScript Transpiler]**<br/>用 Rust 重新实现部分 GDScript 功能。   | [Discord][gdscript-transpiler-discord] | ![GDScript Transpiler][gdscript-transpiler-badge] |
 | ___________________________________________________                     |                                        |                                                   |
-| 🛸 _**Tech demos**_                                                     |                                        |                                                   |
-| **[Godot boids]**<br/>Addon for Godot that adds 2D/3D boids (flocking). | [Discord][godot-boids-discord]         | ???                                               |
+| 🛸 _**技术演示**_                                                     |                                        |                                                   |
+| **[Godot boids]**<br/>为 Godot 添加 2D/3D 集群运动（flocking）的插件。 | [Discord][godot-boids-discord]         | ???                                               |
 
 [Godot Boy]: https://gitlab.com/greenfox/godot-boy
 [godot-boy-discord]: https://discord.com/channels/723850269347283004/1230789480290586624/1230789480290586624
@@ -155,31 +155,27 @@ A list for games is also planned, and will be showcased on a separate page.
 [godot-boids-discord]: https://discord.com/channels/723850269347283004/1279645654439821393/1279645654439821393
 
 
-## Contributing
+## 贡献指南
 
-If you have a project that might fit this list, great! You don't have to be the author -- if you've come across something that will make other
-people's lives easier, please share it!
+如果你有一个适合添加到这个列表的项目，太好了！你不需要是作者——如果你发现了能让其他人受益的东西，请分享出来！
 
-To keep this list useful for visitors, there are a few acceptance criteria:
+为了保持这个列表对访问者有用，以下是一些接受标准：
 
-- The project must be related to godot-rust (not only Rust or only Godot). It should use Godot 4.
-- There's already something tangible with at least minimal docs/examples.
-  - This could be a usable library on GitHub, a working demo, etc. No need for a crate release or very polished presentation; the idea is
-    that the project is accessible for newcomers.
-  - To discuss ideas and WIP prototypes, feel free to start a discussion [in `#showcase` on Discord][discord-showcase]!
-- The author should be willing to maintain the project for a while.
-  - GDExtension has a very good track record with binary compatibility, and [godot-rust supports extensions down to Godot 4.1][gdext-compat].
-    So if you integrate via extensions (e.g. as an editor plugin), your project tends to be more future-proof than with source code.
-  - That said, we don't have major breaking changes very often.
-- If the project is intended for distribution and usage, make sure it comes with a license (e.g. an open-source one for software, or
-  Creative Commons for artworks).
+- 项目必须与 godot-rust 相关（不仅是 Rust 或仅是 Godot）。应使用 Godot 4。
+- 项目已有一定的实质内容，至少有最小的文档/示例。
+  - 这可以是一个在 GitHub 上可用的库，一个有效的演示等。无需发布 crate 或非常精美的展示；关键是项目对新手来说是可以访问的。
+  - 如果你想讨论想法和正在进行的原型，欢迎 [在Discord 的 `#showcase`][discord-showcase] 频道开启讨论！
+- 作者应愿意维护该项目一段时间。
+  - GDExtension 在二进制兼容性方面表现非常好，[godot-rust 支持的扩展可以向下兼容到 Godot 4.1][gdext-compat]。
+    所以如果你通过扩展（例如作为编辑器插件）集成，你的项目通常会比源代码更具未来兼容性。
+  - 话虽如此，我们通常不会经常做重大破坏性更改。
+- 如果该项目打算分发和使用，请确保它附带了许可证（例如软件的开源许可证，或艺术作品的 Creative Commons 许可证）。
 
-Once that's sorted, please open a pull request directly to the [book repository][book-repo]. If you're not sure about
-the criteria or have other questions, don't hesitate to ask on Discord or the [book issue tracker][book-issues].
+完成这些步骤后，请直接向 [文档repo][book-repo] 提交一个 pull request。如果你不确定是否符合标准或有其他问题，随时可以在 Discord 或 [文档issue追踪器][book-issues] 提问。
 
-```admonish tip title="A thriving ecosystem"
-Every single project enriches the space around Godot and Rust, and lets more and more people enjoy game development.
-Thanks a lot to every contributor!
+```admonish tip title="一个蓬勃发展的生态系统"
+每一个项目都在丰富 Godot 和 Rust 生态系统，让更多的人享受游戏开发的乐趣。
+非常感谢每一位贡献者！
 ```
 
 [discord-showcase]: https://discord.com/channels/723850269347283004/1163944783484563537
