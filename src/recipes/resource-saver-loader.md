@@ -84,7 +84,7 @@ impl IObject for MyAssetSingleton {
 ```
 
 ```admonish warning title="at_front 行为"
-目前在 Godot 中，`at_front` 的顺序可能不会按预期工作。更多信息，请查看 PR godot#101543 或文档讨论 [#65][book#65]。
+目前在 Godot 中，`at_front` 的顺序可能不会按预期工作。更多信息，请查看 PR [godot#101543][godot#101543] 或文档讨论 [#65][book#65]。
 
 ```
 
