@@ -11,7 +11,12 @@
 
 如果你是Rust的新手，强烈建议在开始之前先了解一下[Rust的官方文档](https://doc.rust-lang.org/book/)。
 
-如果你想阅读关于gdnative（Godot 3绑定）的文档，请访问这个[链接](https://godot-rust.github.io/gdnative-book/)。
+你可能感兴趣的其他资源：
+
+📘 [最新的API文档][api-docs]  
+⚗️ [Demo项目][demo-projects]
+📄 [英文文档][book-en]  
+📔 [gdnative手册 (Godot3绑定)][gdnative-book]  
 
 
 ## godot-rust的目的
@@ -77,7 +82,11 @@ godot-rust是一个由[社区开发][github-contributors]的开源项目。它�
 [issue #66231]: https://github.com/godotengine/godot/issues/66231
 [extension-library-doc]: https://godot-rust.github.io/docs/gdext/master/godot/init/trait.ExtensionLibrary.html#method.editor_run_behavior
 
+[api-docs]: https://godot-rust.github.io/docs/gdext
 [api-obj-script]: https://godot-rust.github.io/docs/gdext/master/godot/obj/script/index.html
+[book-en]: https://godot-rust.github.io/book
+[demo-projects]: https://github.com/godot-rust/demo-projects
+[gdnative-book]: ../gdnative-book
 [github-contributors]: https://github.com/godot-rust/gdext/graphs/contributors
 [github-gdext]: https://github.com/godot-rust/gdext
 [github-gdnative]: https://github.com/godot-rust/gdnative
