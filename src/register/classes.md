@@ -36,6 +36,7 @@ Rust 使得类注册变得简单。如前所述，Rust 语法作为基础，并�
 
 ```rust
 #[derive(GodotClass)]
+#[class(init)] // 稍后会详细说明这个
 struct Monster {
     name: String,
     hitpoints: i32,
