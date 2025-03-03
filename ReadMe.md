@@ -3,10 +3,10 @@
 godot-rust中文文档是对**gdext**[用户指南][godot-rust-book]的翻译，gdext是Godot 4的Rust绑定。该文档涵盖了大量的概念，并且补充了 [API 文档][gdext-docs]。对于 Godot 3，可以参考 [gdnative-book]。
 
 > [!Tip]
-> The book is deployed at **[colinwttt.github.io/godot-rust-book-chinese][book-web]**.
+> 该文档部署在 **[colinwttt.github.io/godot-rust-book-chinese][book-web]**.
 
 
-## Local setup
+## 本地设置
 
 本书是使用 [mdBook] 和插件 [mdbook-toc]、[mdbook-admonish] 构建的。要安装它们并在本地构建本书，可以运行以下命令：
 
@@ -30,7 +30,7 @@ mdbook serve --open
 npm install --global markdownlint-cli2
 ./lint.sh
 
-# To fix certain errors directly:
+# 直接修复某些错误：
 ./lint.sh fix
 ```
 
