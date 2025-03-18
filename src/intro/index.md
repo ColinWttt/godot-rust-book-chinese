@@ -26,6 +26,6 @@
 
 
 [api-docs]: https://godot-rust.github.io/docs/gdext
-[dodge-the-creeps]: https://github.com/godot-rust/gdext/tree/master/examples/dodge-the-creeps
+[dodge-the-creeps]: https://github.com/godot-rust/demo-projects/tree/master/dodge-the-creeps
 [godot-tutorial]: https://docs.godotengine.org/en/stable/about/introduction.html
 [rust-book]: https://doc.rust-lang.org/book
