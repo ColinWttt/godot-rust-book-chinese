@@ -21,7 +21,7 @@
 
 ```rust
 #[derive(GodotClass)]
-#[class(tool, init, editor_plugin, base=EditorPlugin)]
+#[class(tool, init, base=EditorPlugin)]
 struct MyEditorPlugin {
     base: Base<EditorPlugin>,
 }
