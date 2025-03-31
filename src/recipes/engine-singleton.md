@@ -114,7 +114,7 @@ unsafe impl ExtensionLibrary for MyExtension {
 
 现在您的单例已可用（并且在重新编译和重新加载后），您应该能够从 GDScript 中像这样访问它：
 
-```php
+```GDScript
 extends Node
 
 func _ready() -> void:

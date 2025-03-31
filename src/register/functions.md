@@ -125,7 +125,7 @@ impl Monster {
 
 上面这些方法现在可以在 GDScript 中使用。你可以这样调用它们：
 
-```php
+```GDScript
 var monster = Monster.new()
 # ...
 monster.damage(10)
@@ -153,7 +153,7 @@ impl Monster {
 
 然后可以在 GDScript 中这样调用它：
 
-```php
+```GDScript
 var name: String = Monster.random_name()
 ```
 

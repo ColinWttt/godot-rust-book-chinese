@@ -178,7 +178,7 @@ impl Monster {
 
 就是这样！刚刚添加的关联函数现在已在 GDScript 中注册，并有效地作为构造函数使用：
 
-```php
+```GDScript
 var monster = Monster.from_name_hp("Nomster", 100)
 ```
 

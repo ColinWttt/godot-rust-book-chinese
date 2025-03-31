@@ -18,7 +18,7 @@
 
 在GDScript中，你可以如下定义信号，参数名称和类型是可选的：  
 
-```java
+```GDScript
 signal damage_taken  
 signal damage_taken(amount)  
 signal damage_taken(amount: int)  
@@ -27,7 +27,7 @@ signal damage_taken(amount: int)
 然而，上述声明之间的区别仅是信息性的（例如显示在类的文档中）。
 来看一个例子：  
 
-```java
+```GDScript
 signal damage_taken(amount: int)  
 
 func log_damage():  
@@ -41,7 +41,7 @@ func _ready():
 
 不止`connect`有这个问题，再看一个向`emit()`传递错误类型参数的例子：  
 
-```php
+```GDScript
 signal damage_taken(amount: int)  
 
 func log_damage(amount): # 现在带参数  

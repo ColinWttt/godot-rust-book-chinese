@@ -70,13 +70,13 @@ input.set_mouse_mode(MouseMode::CAPTURED);
 
 GDScript支持参数的默认值。如果没有传递参数，则使用默认值。作为例子，我们可以使用[`AcceptDialog.add_button()`][godot-acceptdialog-add-button]。GDScript签名如下：
 
-```php
+```GDScript
 Button add_button(String text, bool right=false, String action="")
 ```
 
 因此，你可以在GDScript中以以下方式调用：
 
-```php
+```GDScript
 var dialog = AcceptDialog.new()
 var button0 = dialog.add_button("Yes")
 var button1 = dialog.add_button("Yes", true)

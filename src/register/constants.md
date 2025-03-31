@@ -32,7 +32,7 @@ impl Monster {
 
 在 GDScript 中的使用方式如下：
 
-```php
+```GDScript
 var nom = Monster.from_name_hp("Nomster", Monster.DEFAULT_HP)
 var orc = Monster.from_name_hp("Orc", 200)
 ```

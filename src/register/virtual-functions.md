@@ -117,7 +117,7 @@ impl Monster {
 
 以下是 `Orc` 和 `Goblin` 脚本的示例：
 
-```php
+```GDScript
 # Orc.gd
 extends Monster
 
@@ -125,7 +125,7 @@ func _damage():
     return 20
 ```
 
-```php
+```GDScript
 # Goblin.gd
 extends Monster
 

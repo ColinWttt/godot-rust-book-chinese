@@ -39,7 +39,7 @@ struct Monster {
 
 这样做的效果是，`name` 现在作为 _属性_ 在 Godot 中注册：
 
-```php
+```GDScript
 var monster = Monster.new()
 
 # Write the property.
@@ -52,7 +52,7 @@ print(monster.name) # prints "Orc"
 在 GDScript 中，属性是对 getter 和 setter 函数调用的语法糖。你也可以显式调用这些函数：
 
 
-```php
+```GDScript
 var monster = Monster.new()
 
 # Write the property.
