@@ -128,6 +128,7 @@ impl INode3D for Monster {
 信号（无论是否类型化）**不能**在次级 `impl` 块中声明（那些带有 `#[godot_api(secondary)]` 属性的 `impl` 块）。
 ```
 
+
 ## 连接信号  
 
 `godot-rust`提供了多种连接信号的方式，具体取决于handler函数的位置。  
@@ -179,6 +180,7 @@ impl INode3D for Monster {
 如果你想连接多个信号，需要重复调用 `self.signals()`。  
 你不能把它存储在一个变量里重复使用。
 ```
+
 
 ### handler函数在其他对象
 
@@ -268,6 +270,7 @@ let monster: Gd<Monster> = ...;
 let sig = monster.signals().damage_taken();  
 ```  
 
+
 ## Godot 内置信号
 
 Godot 提供了许多内置信号，用于挂接到生命周期和事件中。所有引擎提供的类都实现了
@@ -319,6 +322,7 @@ impl MyClass { ... }
 这样依然可以使用 `#[signal]`，并会注册每一个这样声明的信号，  
 但不会生成一个 `signals()` 集合。
 ```
+
 
 ### 信号可见性
 
@@ -413,7 +417,7 @@ signal.builder()
     .connect_sync(Logger::log_thread_safe); // associated fn, no receiver
 ```
 
-构建器方法需要按正确顺序（“阶段”）调用。详见[API文档][api-typedsignal-connectbuilder]。  
+构建器方法需要按正确顺序（“阶段”）调用。详见[API文档][api-typedsignal-builder] 。  
 
 
 ### 无类型信号  
