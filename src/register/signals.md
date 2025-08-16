@@ -18,7 +18,7 @@
 
 在GDScript中，你可以如下定义信号，参数名称和类型是可选的：  
 
-```GDScript
+```java
 signal damage_taken  
 signal damage_taken(amount)  
 signal damage_taken(amount: int)  
@@ -27,7 +27,7 @@ signal damage_taken(amount: int)
 然而，上述声明之间的区别仅是信息性的（例如显示在类的文档中）。
 来看一个例子：  
 
-```GDScript
+```java
 signal damage_taken(amount: int)  
 
 func log_damage():  
@@ -41,7 +41,7 @@ func _ready():
 
 不止`connect`有这个问题，再看一个向`emit()`传递错误类型参数的例子：  
 
-```GDScript
+```php
 signal damage_taken(amount: int)  
 
 func log_damage(amount): # 现在带参数  
@@ -94,9 +94,10 @@ impl Monster {
 
 ### 生成的代码  
 
-一旦注册了至少一个信号，`godot-rust`会为你的类实现`WithSignals`[api-withsignals] trait。
-这提供了`signals()`方法，现在可以在类方法中访问。  
-`signals()`返回一个_信号集合_，即一个结构体，将所有信号作为命名方法暴露：  
+一旦注册了至少一个信号，`godot-rust`会为你的类实现[`WithUserSignals`][api-withusersignals] trait。
+这提供了`signals()`方法，现在可以在类方法中访问。
+
+`signals()`返回一个 _信号集合_ ，即一个结构体，将所有信号作为命名方法暴露：  
 
 ```rust
 // 生成的代码（$为占位符，实际名称取决于实现）：  
@@ -112,10 +113,20 @@ impl INode3D for Monster {
 }  
 ```
 
-`damage_taken()`方法返回一个自定义生成的_信号类型_（代码片段中称为`$Signal`），其API针对`fn damage_taken(amount: i32)`的签名定制。每个`#[signal]`属性都会生成一个独特的信号类型。  
+`damage_taken()`方法返回一个自定义生成的 _信号类型_ （代码片段中称为`$Signal`），其API针对`fn damage_taken(amount: i32)`的签名定制。每个`#[signal]`属性都会生成一个独特的信号类型。  
 
-信号类型由实现定义。除了`#[signal]`特定的自定义API外，它还通过`Deref/DerefMut`以[`TypedSignal`][api-typedsignal]为目标，这意味着你可以在每种信号类型上使用所有_这些_方法。  
+信号类型由实现定义。除了`#[signal]`特定的自定义API外，它还通过`Deref/DerefMut`以[`TypedSignal`][api-typedsignal]为目标，这意味着你可以在每种信号类型上使用所有 _这些_ 方法。  
 
+```admonish note title="信号 API 的可用性"
+要让类型信号可用，你需要：
+
+- 一个 `#[godot_api] impl MyClass {}` 块。  
+  - 这必须是一个固有 impl，`I*` trait 的 `impl` 并不足够。  
+  - 有必要，可以让该 impl 保持为空。  
+- 一个 `Base<T>` 字段。
+
+信号（无论是否类型化）**不能**在次级 `impl` 块中声明（那些带有 `#[godot_api(secondary)]` 属性的 `impl` 块）。
+```
 
 ## 连接信号  
 
@@ -153,20 +164,25 @@ impl INode3D for Monster {
     fn ready(&mut self) {  
         self.signals()  
             .damage_taken()  
-            .connect_self(|this: &mut Self, amount| {  
-                //               ^^^^^^^^^  
-                //               必须显式；其他参数类型可推断。  
+            .connect_self(|this, amount| {
+                //         ^^^^  ^^^^^^
+                //               类型可推断&mut Self, i32。  
                  
-                ... // 更新血条、播放音效等。  
-            });  
-    }  
-}  
+                this.update_healthbar(amount);
+                this.play_sound(Sfx::MonsterAttacked);
+            });
+    }
+}
 ```  
 
+```admonish note title="一次只有一个信号"
+如果你想连接多个信号，需要重复调用 `self.signals()`。  
+你不能把它存储在一个变量里重复使用。
+```
 
 ### handler函数在其他对象
 
-如果handler函数需要在`self`以外的对象上运行，可以使用`connect_obj()`，它以`&Gd<T>`作为第一个参数：  
+如果handler函数需要在`self`以外的对象上运行，可以使用`connect_other()`，它以`&Gd<T>`作为第一个参数：  
 
 ```rust
 #[godot_api]  
@@ -178,7 +194,7 @@ impl INode3D for Monster {
 
         self.signals()  
             .damage_taken()  
-            .connect_obj(&*self.shield, Shield::on_damage_taken);  
+            .connect_other(&*self.shield, Shield::on_damage_taken);  
     }  
 }  
 ```  
@@ -216,7 +232,7 @@ impl INode3D for Monster {
 
 ## 发射信号  
 
-我们已经看到`#[signal]`属性生成的信号类型提供了多个方法：`connect()`、`connect_self()`和`connect_obj()`。同样的信号类型也提供了`emit()`方法，用于触发信号：
+我们已经看到`#[signal]`属性生成的信号类型提供了多个方法：`connect()`、`connect_self()`和`connect_other()`。同样的信号类型也提供了`emit()`方法，用于触发信号：
 
 ```rust
 impl Monster {  
@@ -230,7 +246,8 @@ impl Monster {
 
 与`connect*()`方法一样，`emit()`是完全类型安全的。你只能传递一个`i32`。如果更新信号定义（例如改为接受`bool`或`enum`表示伤害类型），编译器会捕获所有`connect*`和`emit`调用。重构后你可以安心睡觉。  
 
-`emit()`的另一个优点是它带有参数名称（如`#[signal]`属性中提供的）。这让IDE能提供更多上下文，例如在`emit()`调用中显示参数内联提示。  
+`emit()`的另一个优点是它带有参数名称（如`#[signal]`属性中提供的）。这让IDE能提供更多上下文，例如在`emit()`调用中显示参数内联提示。参数类型使用 [`AsArg<T>` trait][api-asarg]，它遵循引擎 API，并在参数类型上提供灵活性。
+例如，`"string"` 可以作为 `impl AsArg<GString>` 传入。
 
 除了特定的`emit()`方法外，`TypedSignal`（自定义信号类型的deref目标）还提供了一个通用方法`emit_tuple()`，它接受所有参数的元组（按值传递）。这很少需要，但在你想将多个参数作为“捆绑包”传递时很有用。为了完整起见，上述调用等价于：  
 
@@ -242,15 +259,66 @@ self.signals().damage_taken().emit_tuple((amount,));
 ## 在类外部访问信号  
 
 随着游戏交互的增多，你可能不仅想在`impl Monster`块中配置或发射信号，还想在代码库的其他部分操作。
-trait方法[`WithSignals::signals()`][api-withsignals]允许通过`&mut self`直接访问，但在外部你通常只有`Gd<Monster>`。技术上你可以`bind_mut()`该对象，但有更好的方式无需借用检查。  
+trait方法 [`WithUserSignals::signals()`][api-withusersignals]允许通过`&mut self`直接访问，但在外部你通常只有`Gd<Monster>`。技术上你可以`bind_mut()`该对象，但有更好的方式无需借用检查。  
 
-因此，`Gd`本身[也提供了`signals()`方法][api-gd-signals]，返回完全相同的_信号集合_API：  
+因此，`Gd`本身[_也_ 提供了`signals()`方法][api-gd-signals]，返回完全相同的 _信号集合_ API：  
 
 ```rust
 let monster: Gd<Monster> = ...;  
 let sig = monster.signals().damage_taken();  
 ```  
 
+## Godot 内置信号
+
+Godot 提供了许多内置信号，用于挂接到生命周期和事件中。所有引擎提供的类都实现了
+[`WithSignals`][api-withsignals] trait，它是 [`WithUserSignals`][api-withusersignals] 的super trait。
+
+每个类 `T` 都有其自己的信号集合，可以通过 `Gd<T>::signals()` 访问。和类方法一样，信号是可继承的，因此你可以这样做：
+
+```rust
+// tree_entered 是 Node 上声明的信号。
+let node: Gd<Node> = ...;
+let sig = node.signals().tree_entered();
+
+// 你也可以从派生类访问它。
+let node: Gd<Node3D> = ...;
+let sig = node.signals().tree_entered();
+```
+
+这在用户自定义类中同样有效。这意味着我们可以扩展之前的 ready() 实现来连接 Godot 信号：
+
+```rust
+#[godot_api]
+impl INode3D for Monster {
+    fn ready(&mut self) {
+        // 之前的代码。
+        self.signals()
+            .damage_taken()
+            .connect_other(&*self.shield, Shield::on_damage_taken);
+        
+        // 连接到 `Node::renamed` 信号，该信号在节点名称变化时触发。
+        self.signals()
+            .renamed()
+            .connect_self(|this| {
+                let new_name = this.base().get_name();
+                println!("Monster node renamed to {new_name}.");
+            });
+    }
+}
+```
+
+```admonish tip title="禁用类型信号"
+为类型信号生成的 API 即使不使用通常也不会造成问题。  
+然而，可以通过以下方式禁用代码生成：  
+
+~~~rust
+#[godot_api(no_typed_signals)]
+impl MyClass { ... }
+~~~
+
+这样依然可以使用 `#[signal]`，并会注册每一个这样声明的信号，  
+但不会生成一个 `signals()` 集合。
+```
 
 ### 信号可见性
 
@@ -285,17 +353,15 @@ impl Monster {
 假设你有一个音效系统，应在怪物受到伤害时播放音效。你可以从那里连接到信号：  
 
 ```rust
-impl SoundSystem {  
-    fn connect_sound_system(&self, monster: &Gd<Monster>) {  
-        let this = self.to_gd(); // Gd<SoundSystem>  
-
-        monster.signals()  
-            .damage_taken()  
-            .connect_obj(this, |s: &mut Self, _amount| {  
-                s.play_sound(Sfx::MonsterAttacked);  
-            });  
-    }  
-}  
+impl SoundSystem {
+    fn connect_sound_system(&self, monster: &Gd<Monster>) {
+        monster.signals()
+            .damage_taken()
+            .connect_other(self, |this, _amount| {
+                this.play_sound(Sfx::MonsterAttacked);
+            });
+    }
+}
 ```  
 
 
@@ -317,37 +383,35 @@ fn load_map() {
 
 ## 高级信号配置  
 
-`TypedSignal::connect*()`方法设计为直观且覆盖常见用例。如果需要更高级的设置，[`TypedSignal::connect_builder()`][api-typedsignal-connectbuilder]提供了高度定制化。  
+`TypedSignal::connect*()`方法设计为直观且覆盖常见用例。如果需要更高级的设置，[`TypedSignal::builder()`][api-typedsignal-builder]提供了高度定制化。  
 
-返回的`ConnectBuilder`提供了多个维度的配置：  
+返回的[`ConnectBuilder`][api-connectbuilder]提供了多个维度的配置：  
 
-- 接收者：`function(args)`、`method(&self, args)`、`method(&mut self, args)`  
-- 提供的对象：无、`&mut self`或`Gd<T>`  
+- 接收者：`function(args)`、`method(&mut T, args)`、`method(Gd<T>, args)`  
+- 提供的对象：无、`self`或其他实例
 - 连接标志：`DEFERRED`、`ONESHOT`、`PERSIST`  
-- 单线程（默认）或跨线程 (_sync_)
+- 单线程（默认）或跨线程 ("sync")
 
-通过调用`done()`完成。一些示例配置：  
+一些示例配置：  
 
 ```rust
-// Connect -> Self::log_event(&self, event: String)  
-signal.connect_builder()  
-    .object_self() // 传入 &self（信号所在的对象）  
-    .method_immut(Self::log_event) // 接收 &self  
-    .flags(ConnectFlags::DEFERRED | ConnectFlags::ONESHOT)  
-    .done();  
+// Connect -> Self::log_event(&mut self, event: String)
+signal.builder()
+    .flags(ConnectFlags::DEFERRED | ConnectFlags::ONESHOT)
+    .connect_self_mut(Self::log_event); // receive &mut self
 
-// Connect -> Logger::log_event_mut(&mut self, event: String)  
-signal.connect_builder()  
-    .object(some_gd) // 传入 Gd<T>（任意对象）  
-    .method_mut(Logger::log_event_mut) // 接收 &mut self  
-    .done();  
+// Connect -> Logger::log_event(&mut self, event: String)
+signal.builder()
+    .connect_other_mut(some_gd, Logger::log_event);
 
-// Connect -> Logger::log_event(event: String)  
-signal.connect_builder()  
-    .function(Logger::log_event) // 关联函数，无接收者  
-    .sync() // 允许另一个线程接收信号（不会panic）  
-    .done();  
-```  
+// Connect -> Logger::log_event(this: Gd<Self>, event: String)
+signal.builder()
+    .connect_other_gd(some_gd, Logger::log_event);
+
+// Connect -> Logger::log_thread_safe(event: String)
+signal.builder()
+    .connect_sync(Logger::log_thread_safe); // associated fn, no receiver
+```
 
 构建器方法需要按正确顺序（“阶段”）调用。详见[API文档][api-typedsignal-connectbuilder]。  
 
@@ -361,9 +425,19 @@ Godot 处理无类型信号的低级API仍然可用：
 - [`Signal::connect()`][api-signal-connect]
 - [`Signal::emit()`][api-signal-emit]
 
-它们可以作为新类型信号API尚未覆盖的领域的后备（例如Godot的内置信号），或在仅有一些运行时信息可用的情况下使用。  
+新的类型化信号 API 应该能够覆盖全部功能，但在某些情况下，信息只会在运行时才可用，这时无类型的反射 API 就很适合。未来我们也可能将两者结合使用。
 
-某些类型信号功能仍在计划中，将使信号处理更加流畅。其他功能可能不会移植到`godot-rust`，例如`Callable::bind()`等效的Rust方法。直接使用闭包即可。  
+要发射一个无类型信号，你可以通过访问基类（以可变方式）调用 `Object::emit_signal` 方法：
+结合之前示例中的 `Monster` 结构体，你可以这样发射它的信号：
+
+```rust
+self.base_mut().emit_signal(
+    "damage_taken",
+    &[amount_damage_taken.to_variant()]
+);
+```
+
+某些类型信号功能仍在计划中，将使信号处理更加流畅。其他功能可能不会移植到godot-rust，例如`Callable::bind()`等效的Rust方法。直接使用闭包即可。  
 
 
 ## 结论  
@@ -372,14 +446,14 @@ Godot 处理无类型信号的低级API仍然可用：
 Rust函数引用或闭包可以直接连接到信号，发射信号通过常规函数调用实现。
 
 
-[api-object]: https://godot-rust.github.io/docs/gdext/master/godot/classes/struct.Object.html
-[api-signal]: https://godot-rust.github.io/docs/gdext/master/godot/register/derive.GodotClass.html#signals
+[api-asarg]: https://godot-rust.github.io/docs/gdext/master/godot/meta/trait.AsArg.html
 [api-withsignals]: https://godot-rust.github.io/docs/gdext/master/godot/obj/trait.WithSignals.html
+[api-withusersignals]: https://godot-rust.github.io/docs/gdext/master/godot/obj/trait.WithUserSignals.html
 [api-gd-signals]: https://godot-rust.github.io/docs/gdext/master/godot/obj/struct.Gd.html#method.signals
 [godot-gdscript-signals]: https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#signals
 [api-typedsignal]: https://godot-rust.github.io/docs/gdext/master/godot/register/struct.TypedSignal.html
-[api-typedsignal-connectbuilder]: https://godot-rust.github.io/docs/gdext/master/godot/register/struct.TypedSignal.html#method.connect_builder
-
+[api-typedsignal-builder]: https://godot-rust.github.io/docs/gdext/master/godot/register/struct.TypedSignal.html#method.builder
+[api-connectbuilder]: https://godot-rust.github.io/docs/gdext/master/godot/register/struct.ConnectBuilder.html
 [api-object-connect]: https://godot-rust.github.io/docs/gdext/master/godot/classes/struct.Object.html#method.connect
 [api-object-emitsignal]: https://godot-rust.github.io/docs/gdext/master/godot/classes/struct.Object.html#method.emit_signal
 [api-signal-connect]: https://godot-rust.github.io/docs/gdext/master/godot/builtin/struct.Signal.html#method.connect
