@@ -74,7 +74,7 @@ unsafe impl ExtensionLibrary for MyExtension {
         if level == InitLevel::Scene {
             // `&str` 用于标识您的单例，稍后可以用它来访问单例。
             Engine::singleton().register_singleton(
-                "MyEngineSingleton",
+                &MyEngineSingleton::class_name().to_string_name(),
                 &MyEngineSingleton::new_alloc(),
             );
         }
@@ -84,7 +84,7 @@ unsafe impl ExtensionLibrary for MyExtension {
         if level == InitLevel::Scene {
             // 保留我们的引擎单例实例 和 MyEngineSingleton名称 变量。
             let mut engine = Engine::singleton();
-            let singleton_name = "MyEngineSingleton";
+            let singleton_name = &MyEngineSingleton::class_name().to_string_name();
 
 
             // 这里，我们手动检索已注册的单例，
