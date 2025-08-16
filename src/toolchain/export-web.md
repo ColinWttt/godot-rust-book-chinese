@@ -12,7 +12,7 @@ This will be a complete guide on how to get things compiled.
 However, setting up a web server to host and share your game is considered out of scope of this guide, and is best explained elsewhere.
 
 ```admonish warning
-Web support with gdext is experimental and should be understood as such before proceeding.
+Web support in godot-rust is experimental and should be understood as such before proceeding.
 ```
 
 
@@ -29,18 +29,18 @@ Assuming that Rust was installed with `rustup`, this is quite simple.
   rustup target add wasm32-unknown-emscripten --toolchain nightly
   ```
 
-Next, install Emscripten.  The simplest way to achieve this is to install [`emsdk` from the git repo][emsdk-git].
-We recommend version 3.1.62 or later (≤ 3.1.73) when targeting Godot 4.3 or later.[^1]
+Next, install Emscripten.  The simplest way to achieve this is to install [`emsdk` from the git repo][emsdk-git].  \
+We recommend version **3.1.74** when targeting Godot 4.3 or later.[^emcc-version]
 
 ```sh
 git clone https://github.com/emscripten-core/emsdk.git
 cd emsdk
-./emsdk install 3.1.62
-./emsdk activate 3.1.62
+./emsdk install 3.1.74
+./emsdk activate 3.1.74
 source ./emsdk.sh # On Windows: `run ./emsdk.bat`
 ```
 
-It would also be **highly** recommended to follow the instructions in the terminal to add `emcc`[^2] to your `PATH`.
+It would also be **highly** recommended to follow the instructions in the terminal to add `emcc`[^emcc-def] to your `PATH`.
 If not, it is necessary to manually `source` the `emsdk.sh` file in every new terminal prior to compilation.
 This is platform-specific.
 
@@ -77,8 +77,8 @@ Start by adding the following contents to that file:
 [target.wasm32-unknown-emscripten]
 rustflags = [
     "-C", "link-args=-pthread", # /!\ Read 'Thread support' below regarding this flag
+    "-C", "target-feature=+atomics", # /!\ Read 'Thread support' below regarding this flag
     "-C", "link-args=-sSIDE_MODULE=2",
-    "-C", "target-feature=+atomics,+bulk-memory,+mutable-globals",
     "-Zlink-native-libraries=no",
     "-Cllvm-args=-enable-emscripten-cxx-exceptions=0",
 ]
@@ -105,7 +105,7 @@ emcc --version
 ```
 
 Now, try to compile your code.
-It is necessary to both use the nightly compiler and specify to build std[^3], along with specifying the Emscripten target.
+It is necessary to both use the nightly compiler and specify to build std[^nightly-std], along with specifying the Emscripten target.
 
 ```sh
 cargo +nightly build -Zbuild-std --target wasm32-unknown-emscripten
@@ -133,8 +133,14 @@ With the proposed initial configuration from ["Project configuration"](#project-
 your extension would break. If you'd like your extension to support builds without multi-threading as well to avoid this problem,
 you will need to update your build setup in one of the two following ways.
 
-Note that earlier versions of emscripten expected `link-args=-sUSE_PTHREADS=1` instead of `link-args=-pthread`, but this flag has
+```admonish note
+Ensure you're using recommended versions of Emscripten and nightly Rust (at least Rust 1.85 is recommended).
+
+This is because earlier versions of Emscripten expected `link-args=-sUSE_PTHREADS=1` instead of `link-args=-pthread`, but this flag has
 been deprecated.
+
+In addition, earlier Rust versions required additional `+bulk-memory,+mutable-globals` target features, but they appear to not be needed anymore. 
+```
 
 
 ### Building without multi-threading support
@@ -142,7 +148,7 @@ been deprecated.
 In this scenario, you'd like to build your extension without any multi-threading support, that is, to have your extension only work
 when _Thread Support_ is disabled.
 
-To do that, you must remove the line with the `-pthread` flag from `.cargo/config.toml`,
+To do that, you must remove the lines with the `-pthread` and `target-feature=+atomics` flags from `.cargo/config.toml`,
 as well as enable the [`experimental-wasm-nothreads`][api-cargo-features] feature in `Cargo.toml`.
 
 The remaining configuration and build command do not require further changes.
@@ -162,14 +168,13 @@ when exporting to the web.
 
 Here's how this can be done:
 
-1. Remove `"-C", "link-args=-pthread"` from `.cargo/config.toml` so that you may conditionally enable it afterwards,
-    resulting in the following updated `.cargo/config.toml` file:
+1. Remove `"-C", "link-args=-pthread"` and `"-C", "target-feature=+atomics"` from `.cargo/config.toml` so that you may conditionally enable them
+    afterwards, resulting in the following updated `.cargo/config.toml` file:
 
     ```toml
     [target.wasm32-unknown-emscripten]
     rustflags = [
         "-C", "link-args=-sSIDE_MODULE=2",
-        "-C", "target-feature=+atomics,+bulk-memory,+mutable-globals",
         "-Zlink-native-libraries=no",
         "-Cllvm-args=-enable-emscripten-cxx-exceptions=0",
     ]
@@ -183,12 +188,12 @@ Here's how this can be done:
     nothreads = ["godot/experimental-wasm-nothreads"]
     ```
 
-    Note that this feature should be enabled on any crates depending on gdext, so if you have more than one crate in your workspace,
-    you should add the same `[features]` section above to each other crate using gdext, and then enable each crate's `nothreads` feature
+    This feature should be enabled on any crates depending on the `godot` crate, so if you have more than one crate in your workspace,
+    you should add the same `[features]` section above to each other crate, and then enable each crate's `nothreads` feature
     from the main crate (which provides the extension's entrypoint).
 
     For example, if you have a workspace with one main crate called `extension` and two other crates called `lib1` and `lib2`,
-    each depending on gdext, then you may add the `[features]` section above to `crates/lib1/Cargo.toml` and `crates/lib2/Cargo.toml`,
+    each depending on `godot`, then you may add the `[features]` section above to `crates/lib1/Cargo.toml` and `crates/lib2/Cargo.toml`,
     and then add the following to `crates/extension/Cargo.toml`:
 
     ```toml
@@ -214,8 +219,8 @@ Here's how this can be done:
     ```
 
 4. Have two separate build commands, executed in the following order:
-    1. **Building with multi-threading support:** you must add the `-pthread` flag back manually through the `RUSTFLAGS` environment variable,
-    but NOT enable the `nothreads` feature yet.
+    1. **Building with multi-threading support:** you must add the `-pthread` and `target-feature=+atomics` flags back manually through
+    the `RUSTFLAGS` environment variable, but NOT enable the `nothreads` feature yet.
 
         ```admonish warning
         Specifying `RUSTFLAGS` will cause flags in `.cargo/config.toml` to be ignored, so all flags in it must be specified again.
@@ -226,8 +231,8 @@ Here's how this can be done:
 
         ```sh
         RUSTFLAGS="-C link-args=-pthread \
+        -C target-feature=+atomics \
         -C link-args=-sSIDE_MODULE=2 \
-        -C target-feature=+atomics,+bulk-memory,+mutable-globals \
         -Zlink-native-libraries=no \
         -Cllvm-args=-enable-emscripten-cxx-exceptions=0" cargo +nightly build -Zbuild-std --target wasm32-unknown-emscripten
 
@@ -237,8 +242,8 @@ Here's how this can be done:
 
         For a release mode build, you'd replace `debug` with `release` in the last command.
 
-    2. **Building without multi-threading support:** build without the `-pthread` flag, but this time enabling your `nothreads` feature
-        created in the second step.
+    2. **Building without multi-threading support:** build without the `-pthread` or `target-feature=+atomics` flags, but this time enabling
+        your `nothreads` feature created in the second step.
 
         No further renaming is needed, but make sure the previous build's resulting binary was renamed to avoid accidentally overwriting it.
 
@@ -283,7 +288,7 @@ in a [Justfile](https://github.com/casey/just) (useful if you need to build from
 
 ## Godot editor setup
 
-To export your game using gdext to the web, add a web export in the Godot Editor. It can be configured at `Project > Export...` in the top menu bar.
+To export your godot-rust game to the web, add a web export in the Godot Editor. It can be configured at `Project > Export...` in the top menu bar.
 Make sure to turn on the _Extensions Support_ checkbox.
 
 In Godot 4.3 or above, you should also make sure to turn on the _Thread Support_ checkbox, unless your extension has a `nothreads` build,
@@ -351,13 +356,13 @@ as otherwise your extension's `.wasm` file may be overwritten, leading to confus
 
     The game aborted unexpectedly. This likely means some Rust code called `panic!()` or unsuccessful `assert!(condition)`.
 
-    Unfortunately, gdext cannot catch panics in Wasm yet due to limitations in the Rust compiler, so your game will abort.
+    Unfortunately, godot-rust cannot catch panics in Wasm yet due to limitations in the Rust compiler, so your game will abort.
 
     Please fix any panics indicated in the browser console, perhaps using [debugging tools](#debugging). The suggested `-sASSERTIONS` flag will
     likely not help at all.
 
     Some common panic causes include:
-      - Attempting to call certain threaded code in a `nothreads` build, such as `std::thread::spawn(...)` or `thread_local!`;
+      - Attempting to call certain multi-threaded code in a `nothreads` build, such as `std::thread::spawn(...)`;
       - Using panicking variants of methods, such as `Array::at` instead of `Array::get`;
       - Calling `.unwrap()` on `Option::None` or `Result::Err`.
 
@@ -367,32 +372,32 @@ as otherwise your extension's `.wasm` file may be overwritten, leading to confus
 
 3. `Wasm module '{YourCrate}.wasm' not found. Check the console for more information.`
 
-    This indicates the extension's Wasm binary filename is using a name that is unexpected to gdext.
+    This indicates the extension's Wasm binary filename is using a name that godot-rust doesn't expect.
 
-    By default, on game startup (only on the Wasm target), gdext will look for binaries named `{YourCrate}.wasm` or `{YourCrate}.threads.wasm`.
-    If your GDExtension is using a different Wasm filename, please either rename it to one of those names, or tell gdext the name of the Wasm binary
-    you are using as below. Don't forget to update the binary name in your `.gdextension` file to match.
+    By default, on game startup (only on the Wasm target), godot-rust will look for binaries named `{YourCrate}.wasm` or `{YourCrate}.threads.wasm`.
+    If your GDExtension is using a different Wasm filename, please either rename it to one of those names, or tell godot-rust the name of the Wasm
+    binary you are using as below. Don't forget to update the binary name in your `.gdextension` file to match.
 
     ```rs
-    // lib.rs of your main crate
+    // lib.rs of your main crate:
     struct MyExtension;
 
     #[gdextension]
     unsafe impl ExtensionLibrary for MyExtension {
         fn override_wasm_binary() -> Option<&'static str> {
-            // Tell gdext we are using a custom name for our Wasm binary
+            // Explicitly use a custom name for our Wasm binary.
             Some("some-different-name.wasm")
         }
     }
     ```
 
-    In addition, please note that **gdext 0.3 or later** is required to fix this error.
+    In addition, please note that **godot-rust 0.3 or later** is required to fix this error.
 
 
 ### Customizing `emcc` flags
 
 If you keep running into unknown errors and none of the solutions above worked, first and foremost consider letting us know by
-[opening a gdext issue][gdext-issues], especially if you're using a newer Godot version, as it's possible some new information
+[opening an issue][gdext-issues], especially if you're using a newer Godot version, as it's possible some new information
 is missing from this documentation.
 
 Make sure to also check or comment on the [WebAssembly thread on GitHub][webassembly-github-thread], as new information is continually added
@@ -427,22 +432,25 @@ For example, in a multi-threaded build:
 ```sh
 RUSTFLAGS="-C link-args=-g \
 -C link-args=-pthread \
+-C target-feature=+atomics \
 -C link-args=-sSIDE_MODULE=2 \
--C target-feature=+atomics,+bulk-memory,+mutable-globals \
 -Zlink-native-libraries=no \
 -Cllvm-args=-enable-emscripten-cxx-exceptions=0" cargo +nightly build -Zbuild-std --target wasm32-unknown-emscripten
 ```
-
 
 <br>
 
 ---
 
-[^1]: Note: Due to a bug with `emscripten`, web export templates for Godot 4.2 and earlier versions could only be compiled with
-`emcc`[^2] versions up to `3.1.39`. If you're targeting those older Godot versions, it could be safer to use `emcc` version `3.1.39`
+**Footnotes**
+
+[^emcc-version]: Note: Due to a bug with `emscripten`, web export templates for Godot 4.2 and earlier versions could only be compiled with
+`emcc` versions up to `3.1.39`. If you're targeting those older Godot versions, it could be safer to use `emcc` version `3.1.39`
 to compile your extension as well, but newer `emcc` versions might still work regardless
 (just make sure to test your extension in all targeted Godot versions).
 
-[^2]: `emcc` is the name of Emscripten's compiler.
+[^emcc-def]: `emcc` is the name of Emscripten's compiler.
 
-[^3]: The primary reason for this is it is necessary to compile with `-sSHARED_MEMORY` enabled. The shipped `std` does not, so building `std` is a requirement. Related info on about WASM support can be found [here](https://github.com/rust-lang/rust/issues/77839).
+[^nightly-std]: The primary reason for this is it is necessary to compile with `-pthread` and `-Ctarget-feature=+atomics` enabled for multi-threaded builds.
+The shipped `std` does not, and may also build with other flags we don't use, so building `std` is a requirement.
+Related info on about WASM support can be found [here](https://github.com/rust-lang/rust/issues/77839).
