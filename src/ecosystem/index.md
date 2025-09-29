@@ -35,6 +35,7 @@
 | **[gd-props]**<br/>使用 `serde` 进行资源序列化。                       | [Discord][gd-props-discord]                                              | ![gd-props][gd-props-badge]                   |
 | **[gdext-generation]**<br/>自动生成 `.gdextension` 文件。              | [Discord][gdext-generation-discord]                                      | ![gdext-generation][gdext-generation-badge]   |
 | **[godot-rust-cli]**<br/>为 Godot 提供的 Rust CLI 脚本。                    | [Discord][godot-rust-cli-discord]                                        | ![godot-rust-cli][godot-rust-cli-badge]   |
+| **[gdext-cli]**<br/>A CLI tool to generate godot-rust projects and scripts.    |                                                                          | ![gdext-cli][gdext-cli-badge]                 |
 | ___________________________________________________                            |                                                                          |                                               |
 | 📜 _**脚本编程**_                                                             |                                                                          |                                               |
 | **[godot-rust-script]**<br/>允许将 Rust 脚本添加到节点。         |                                                                          | ![godot-rust-script][godot-rust-script-badge] |
@@ -68,6 +69,9 @@
 [godot-rust-cli]: https://github.com/TheColorRed/godot-rust
 [godot-rust-cli-badge]: https://img.shields.io/github/last-commit/TheColorRed/godot-rust
 [godot-rust-cli-discord]: https://discord.com/channels/723850269347283004/1325220721340977253
+
+[gdext-cli]: https://github.com/FrankCasanova/gdext-cli
+[gdext-cli-badge]: https://img.shields.io/github/last-commit/FrankCasanova/gdext-cli
 
 [godot-rust-script]: https://github.com/titannano/godot-rust-script
 [godot-rust-script-badge]: https://img.shields.io/github/last-commit/titannano/godot-rust-script

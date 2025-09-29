@@ -45,3 +45,4 @@
 - [迁移指南](migrate/index.md)
   - [迁移到v0.2](migrate/v0.2.md)
   - [迁移到v0.3](migrate/v0.3.md)
+  - [迁移到v0.4](migrate/v0.4.md)
