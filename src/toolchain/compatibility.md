@@ -7,7 +7,7 @@
 
 # 兼容性和稳定性
 
-gdext 库支持从 Godot 4.0 起的所有Godot稳定版本。
+godot-rust 库同时支持多个 Godot 稳定版本。
 
 
 ## 与 Godot 的兼容性
@@ -15,10 +15,39 @@ gdext 库支持从 Godot 4.0 起的所有Godot稳定版本。
 在开发扩展库（或简称“扩展”）时，你需要考虑目标的引擎版本。
 这里有两个概念上不同的版本：
 
-- **API 版本**：指的是编译 gdext（和你的扩展代码）时所针对的 GDExtension 版本。
-- **运行时版本**：指的是用 gdext 构建的库运行的 Godot 版本。
+- **API 版本**：你的扩展**编译**时所针对的 GDExtension 版本。
+- **运行时版本**：指的是用 godot-rust 构建的库**运行**的 Godot 版本。
 
-这两个版本可以不同，但有一定的约束（见[下文](#当前保证)）。
+这两个版本可以不同，但需遵循以下规则：
+
+
+### 当前保证
+
+最新的 godot-rust 至少需要 **Godot 4.2**。
+
+从该版本正式发布起，只要 _运行时版本 **>=** API 版本_ ，扩展可以在任何 Godot 版本中加载，。
+
+- 你可以在 Godot `4.2.1` 或 `4.3` 中运行 `4.2` 的扩展。
+- 你不能在 Godot `4.2.1` 中运行 `4.3` 的扩展。
+
+只要 GDExtension API 以向后兼容的方式演进——自 Godot 4.1 以来它已显著实现了这一点——我们将尽力维持此保证。
+如果你发现任何不一致之处，请向我们报告。
+
+
+## 兼容性矩阵
+
+我们通常会在 Godot 版本发布后提供 1-2 年的支持，具体取决于功能集和维护工作量。
+例如，Godot 4.0 扩展与较新版本二进制不兼容，因此价值非常有限。
+Godot 4.1 也缺乏 Rust 可调用对象、类型化信号、热重载等必要的基础功能。
+
+如果你需要支持较旧的 Godot 版本，可以回退到旧的 godot-rust 版本。
+但这些版本将不再接收任何更新，即使是关键错误修复。
+
+| godot-rust 版本 | 最低 Godot 版本 | Godot 发布日期[^Godot-versions] |
+|--------------------|-----------------------|-------------------------------------|
+| 0.4+               | 4.2                   |  2023 11月                     |
+| 0.2, 0.3           | 4.1                   |  2023 7月                          |
+| 0.1                | 4.0[^Godot-4-0]       |  2023 3月                     |
 
 
 ### 开发理念
@@ -36,22 +65,9 @@ gdext 库支持从 Godot 4.0 起的所有Godot稳定版本。
 如果你发现不兼容或违反以下规则的情况，请告知我们。
 
 
-### 当前保证
-
-使用 API 版本 `4.0.x` 开发的每个扩展**必须**在相同的运行时版本下运行。
-
-- 需要注意，无法在 Godot 4.1 或更高版本中运行使用 API 版本 `4.0.x` 编译的扩展，因为 Godot 的 GDExtension API 已发生破坏性变化。
-
-从 Godot 4.1 正式发布开始，扩展可以在任何 Godot 版本中加载，只要 _运行时版本 **>=** API 版本_。
-
-- 你可以在 Godot `4.1.1` 或 `4.2` 中运行 `4.1` 的扩展。
-- 你不能在 Godot `4.1.1` 中运行 `4.2` 的扩展。
-- 这一点可能会随着 GDExtension API 的发展和我们需要处理的破坏性变更的增加而有所调整。
-
-
 ### 不在支持范围内
 
-我们**不**维护以下内容的兼容性：
+我们**不会**投入精力维护以下内容的兼容性：
 
 1. Godot 的开发版本，除非是最新的`master`分支。
    - 请注意，我们可能需要一些时间来跟进最新的变更，因此请不要在上游更改合并后的几天内报告问题。
@@ -65,9 +81,10 @@ gdext 库支持从 Godot 4.0 起的所有Godot稳定版本。
 
 ## Rust API的稳定性
 
-我们仍处于构建和完善 gdext 基础的阶段，因此**可以预期会有破坏性变化**。
-在当前阶段，我们认为让 API 更加符合人体工程学和易于使用的优先级高于长期稳定性。
-否则，我们可能会过早地把自己锁定在某种设计角落里。
+godot-rust 的许多基础已经构建完成并处于生产就绪状态。然而，我们仍然定期添加新功能，有时会优化现有 API。
+因此，**可以预期偶尔会有破坏性变化**。
+这些变更通常是微小的，并会在[更新日志][changelog]和[迁移指南][migrate]中宣布。
+我们还会在 API 中使用弃用机制，以实现平滑过渡。
 
 需要注意的是，许多破坏性变化是由外部因素引起的，比如：
 
@@ -75,4 +92,19 @@ gdext 库支持从 Godot 4.0 起的所有Godot稳定版本。
 - 类型系统或运行时保证中的一些细微差别，可以通过更好、更安全的方式被构建（例如类型化数组、RIDs）。
 - 我们收到了来自游戏开发者和其他用户的反馈，认为某些工作流程非常繁琐。
 
-一旦我们进入更稳定的特性集，我们计划在 crates.io 上发布版本，并遵循语义版本控制。
+我们在 [crates.io releases](https://crates.io/crates/godot)上的发布遵循 SemVer，但可能落后于 master 分支。
+
+[changelog]: https://github.com/godot-rust/gdext/blob/master/Changelog.md
+[migrate]: https://godot-rust.github.io/book/migrate
+
+<br>
+
+---
+
+**脚注**
+
+[^Godot-4-0]: Every extension developed with API version `4.0.x` **MUST** be run with the same runtime version.
+    In particular, it is not possible to run an extension compiled with API version `4.0.x` in Godot 4.1 or later.
+    This is due to breaking changes in Godot's GDExtension API.
+
+[^Godot-versions]: See _Release history_ on [Wikipedia](https://en.wikipedia.org/wiki/Godot_(game_engine)#Release_history).

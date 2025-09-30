@@ -19,9 +19,9 @@ Godot有一个特殊的构造函数，我们称之为 _Godot默认构造函数_�
 
 ## 默认构造函数
 
-在 gdext 中，任何 `GodotClass` 对象的构造函数被称为 `init`。这个构造函数是用来在 Godot 中实例化对象的。当场景树需要实例化对象，或者当你在 GDScript 中调用 `Monster.new()` 时，它会被调用。
+在 godot-rust 中，任何 `GodotClass` 对象的构造函数被称为 `init`。这个构造函数是用来在 Godot 中实例化对象的。当场景树需要实例化对象，或者当你在 GDScript 中调用 `Monster.new()` 时，它会被调用。
 
-定义构造函数有两种选择：可以让 gdext 自动生成，也可以手动定义。如果你不需要 Godot 默认构造你的对象，还可以选择不使用 `init`。
+定义构造函数有两种选择：可以让 godot-rust 自动生成，也可以手动定义。如果你不需要 Godot 默认构造你的对象，还可以选择不使用 `init`。
 
 
 ### 库生成的 `init`
@@ -84,7 +84,8 @@ impl INode3D for Monster {
 
 `init` 方法总是返回 `Self`。你可能注意到，目前这是构造 `Monster` 实例的唯一方式。一旦你的结构体包含了一个基类字段，你就不能再提供自己的构造函数了，因为你不能为这个字段提供一个值。这是设计上的原因，并且确保了 _如果_ 你需要访问基类，这个基类是直接来自 Godot 的。
 
-不过，不用担心：你仍然可以提供各种构造函数，只是它们需要通过专门的函数来实现，这些函数内部调用 `init`。更多内容将在下一节讨论。
+不过，不用担心：你仍然可以提供各种构造函数，只是它们需要通过专门的函数来实现，这些函数内部调用 `init`。
+更多内容将在下一节讨论。
 
 
 ### 禁用 `init`
@@ -117,16 +118,16 @@ struct Monster {
 例如， `Monster` 在构造时总会有相同的 `name` 和 `hitpoints` 这可能不是我们希望的。让我们提供一个更合适的构造函数，它将这些属性作为参数。
 
 ```rust
-// Default constructor from before.
+// 之前默认的 constructor。
 #[godot_api]
 impl INode3D for Monster {
     fn init(base: Base<Node3D>) -> Self { ... }
 }
 
-// New custom constructor.
+// 新的自定义 constructor.
 #[godot_api]
 impl Monster {
-    #[func] // Note: the following is incorrect.
+    #[func] // 注意: 下面代码是错误的
     fn from_name_hp(name: GString, hitpoints: i32) -> Self { 
         ...
     }
@@ -167,7 +168,7 @@ impl Monster {
         Gd::from_init_fn(|base| {
             // Accept a base of type Base<Node3D> and directly forward it.
             Self {
-                name: name.into(), // Convert GString -> String.
+                name: name.into(), // 转换 GString -> String.
                 hitpoints,
                 base,
             }
@@ -226,7 +227,7 @@ impl Drop for Monster {
 }
 ```
 
-当 Godot 命令销毁你的 `Gd<T>` 智能指针时——无论是手动释放，还是最后一个引用超出作用域——都会调用`Drop::drop()`。
+当 Godot 命令销毁你的 `Gd<T>` 智能指针时——无论是手动释放，还是最后一个引用超出作用域，都会调用`Drop::drop()`。
 
 
 ## 结论

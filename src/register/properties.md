@@ -23,7 +23,7 @@
 
 之前，我们定义了一个函数 `Monster::get_name()`，它可以用来获取名称，但在 GDScript 中使用时仍然需要写 `obj.get_name()`。有时候，你不需要额外的封装，而是希望直接访问字段。
 
-gdext 库提供了 `#[var]` 属性来标记应当暴露为变量的字段。它的功能类似于 GDScript 中的 `var` 关键字。
+godot-rust库提供了 `#[var]` 属性来标记应当暴露为变量的字段。它的功能类似于 GDScript 中的 `var` 关键字。
 
 从之前的结构体声明开始，我们现在将 `#[var]` 属性添加到 `name` 字段上。同时，我们将类型从 `String` 改为 `GString`，因为该字段现在直接与 Godot 交互。
 
@@ -76,7 +76,7 @@ print(monster.get_name()) # prints "Orc"
 
 `#[var]` 属性将字段暴露给 GDScript，但不会在 Godot 编辑器 UI 中显示它。
 
-将属性暴露到编辑器 UI 中被称为 _导出_。与 GDScript 中的 `@export` 注解类似，gdext 通过 `#[export]` 属性提供导出功能。你可能会注意到命名上的一致性。
+将属性暴露到编辑器 UI 中被称为 _导出_。与 GDScript 中的 `@export` 注解类似，godot-rust通过 `#[export]` 属性提供导出功能。你可能会注意到命名上的一致性。
 
 下面的代码不仅将 `name` 字段暴露给 GDScript，还会在编辑器中添加一个属性 UI。这样，你就可以为每个 `Monster` 实例单独命名，而无需编写任何代码！
 
@@ -151,9 +151,11 @@ enum Planet {
 ~~~
 大致等同于：
 ~~~java
-const EARTH = 0
-const VENUS = 1
-const MARS = 2
+const Planet: Dictionary = {
+    EARTH = 0,
+    VENUS = 1,
+    MARS = 2,
+}
 
 @export_enum("EARTH", "VENUS", "MARS") var favorite_planet = Planet.EARTH
 ~~~
@@ -161,7 +163,9 @@ const MARS = 2
 ~~~java
 var p: Planet = 5
 ~~~
-此外，除非你用字符串值初始化常量，否则你无法检索它们的名称，这会让调试更加困难。并且没有反射机制，比如“获取枚举值的数量”或“遍历所有枚举值”。如果你有选择，建议保持枚举类型在 Rust 中定义。
+此外，你也无法轻松地从表达式 `Planet.EARTH` 中获取名称 `"EARTH"`。[^enum-name]
+
+更多详细信息请参阅 [GDScript 枚举][godot-gdscript-enums]。
 
 ```
 
@@ -201,3 +205,13 @@ array作为属性注册时，GDScript 在你修改它时会创建一个新实例
 [api-var-export]: https://godot-rust.github.io/docs/gdext/master/godot/register/derive.GodotClass.html#properties-and-exports
 [godot-gdscript-properties]: https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#properties
 [gh-godot-packedarray]: https://github.com/godotengine/godot/issues/76150
+[godot-gdscript-enums]: https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#enums
+
+<br>
+
+---
+
+**脚注**
+
+[^enum-name]: You _can_ obtain `"EARTH"` if you iterate the `Planet` dictionary and compare each value (assuming there are no duplicates).
+   That however requires that you know the type (`Planet`); the value itself does not hold this information.

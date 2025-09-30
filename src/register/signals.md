@@ -424,24 +424,36 @@ signal.builder()
 
 Godot 处理无类型信号的低级API仍然可用：  
 
-- [`Object::connect()`][api-object-connect], `Object::connect_ex()`
+- [`Object::connect()`][api-object-connect]
+- [`Object::connect_ex()`][api-object-connect-ex]
 - [`Object::emit_signal()`][api-object-emitsignal]
 - [`Signal::connect()`][api-signal-connect]
 - [`Signal::emit()`][api-signal-emit]
 
 新的类型化信号 API 应该能够覆盖全部功能，但在某些情况下，信息只会在运行时才可用，这时无类型的反射 API 就很适合。未来我们也可能将两者结合使用。
 
-要发射一个无类型信号，你可以通过访问基类（以可变方式）调用 `Object::emit_signal` 方法：
-结合之前示例中的 `Monster` 结构体，你可以这样发射它的信号：
+连接信号的一种传统方式是传入信号名称和 `Callable`：
+
+```rust
+let monster: Gd<Monster> = ...;
+let damage_taken: Callable = monster.callable("damage_taken");
+monster.connect("damage_taken", &damage_taken);
+```
+
+要发射没有类型的信号，可以通过（可变）访问基类来调用 `Object::emit_signal()` 方法。
+沿用之前示例中的 `Monster` 结构体，您可以通过以下方式发射其信号：
 
 ```rust
 self.base_mut().emit_signal(
     "damage_taken",
-    &[amount_damage_taken.to_variant()]
+   vslice![amount_damage_taken],
 );
 ```
 
-某些类型信号功能仍在计划中，将使信号处理更加流畅。其他功能可能不会移植到godot-rust，例如`Callable::bind()`等效的Rust方法。直接使用闭包即可。  
+查看 [`vslice!`][api-vslice] 文档了解如何通过切片传递多个变体参数。
+
+一些没有类型的信号的功能可能会移植到有类型的信号，但其他功能（如 `Callable::bind()`）可能不会提供。
+直接使用闭包替代即可。总的来说，[`TypedSignal`][api-typedsignal] 和 [`ConnectBuilder`][api-connectbuilder] API 的设计允许您根据自己的工作流程进行扩展。
 
 
 ## 结论  
@@ -459,6 +471,8 @@ Rust函数引用或闭包可以直接连接到信号，发射信号通过常规�
 [api-typedsignal-builder]: https://godot-rust.github.io/docs/gdext/master/godot/register/struct.TypedSignal.html#method.builder
 [api-connectbuilder]: https://godot-rust.github.io/docs/gdext/master/godot/register/struct.ConnectBuilder.html
 [api-object-connect]: https://godot-rust.github.io/docs/gdext/master/godot/classes/struct.Object.html#method.connect
+[api-object-connect-ex]: https://godot-rust.github.io/docs/gdext/master/godot/classes/struct.Object.html#method.connect_ex
 [api-object-emitsignal]: https://godot-rust.github.io/docs/gdext/master/godot/classes/struct.Object.html#method.emit_signal
 [api-signal-connect]: https://godot-rust.github.io/docs/gdext/master/godot/builtin/struct.Signal.html#method.connect
 [api-signal-emit]: https://godot-rust.github.io/docs/gdext/master/godot/builtin/struct.Signal.html#method.emit
+[api-vslice]: https://godot-rust.github.io/docs/gdext/master/godot/builtin/macro.vslice.html

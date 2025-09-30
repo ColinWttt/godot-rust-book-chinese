@@ -8,7 +8,7 @@
 # 调试（Debugging）
 
 
-用 gdext 编写的扩展可以像调试其他 Rust 程序一样使用 LLDB 进行调试。
+用 godot-rust 编写的扩展可以像调试其他 Rust 程序一样使用 LLDB 进行调试。
 主要的区别在于，LLDB 会启动或附加到 Godot 的 C++ 可执行文件：无论是 Godot 编辑器，还是你的自定义 Godot 应用程序。
 随后，Godot 会加载你的扩展（它本身是一个动态库），并通过它加载你的 Rust 代码。
 

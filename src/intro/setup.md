@@ -29,11 +29,12 @@
 
 ```bash
 # --- Linux ---
-# 对于 Ubuntu 或 基于Debian的 distros.
-apt install godot
-
 # 对于 Fedora/RHEL.
 dnf install godot
+
+# Arch Linux.
+pacman -Syu godot
+paru -Syu godot
 
 # 通过 Flatpak 安装，适用于所有发行版
 flatpak install flathub org.godotengine.Godot
@@ -41,7 +42,9 @@ flatpak install flathub org.godotengine.Godot
 
 # --- Windows ---
 # 可以通过 WinGet 安装 Windows 版本
-winget install --id=GodotEngine.GodotEngine -e
+winget install -e --id GodotEngine.GodotEngine
+choco install godot
+scoop bucket add extras && scoop install godot
 
 
 # --- macOS ---
@@ -65,7 +68,7 @@ brew install godot
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 # Windows
-winget install --id=Rustlang.Rustup -e
+winget install -e --id Rustlang.Rustup
 
 # macOS
 brew install rustup
@@ -75,7 +78,7 @@ brew install rustup
 
 ```bash
 $ rustc --version
-rustc 1.74.1 (a28077b28 2023-12-04)
+rustc 1.88.0 (6b00bc388 2025-06-23)
 ```
 
 
